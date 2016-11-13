@@ -1,9 +1,11 @@
-package eleweigh.woxian.com.eleweight;
+package eleweigh.woxian.com.eleweight.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+
+import eleweigh.woxian.com.eleweight.R;
 
 public class MainActivity extends BaseActivity {
     TextView tv_weight;

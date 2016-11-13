@@ -11,4 +11,7 @@
     <color name="trans">#00000000</color>
     <color name="gray_et_787878">#787878</color>
     <color name="gray_bg_3C3C3C">#3C3C3C</color>
+    <color name="gray_bg_divider">#3C3C3C</color>
+    <color name="gray_bg_D8D8D8r">#D8D8D8</color>
+    <color name="gray_bg_F5F5F5">#F5F5F5</color>
 </resources>

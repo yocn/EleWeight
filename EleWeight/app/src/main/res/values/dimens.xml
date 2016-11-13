@@ -3,6 +3,12 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="height_et">70dp</dimen>
+    <dimen name="height_title">80dp</dimen>
+    <dimen name="detail_title">70dp</dimen>
+    <dimen name="detail_bottom">80dp</dimen>
     <dimen name="height_login">50dp</dimen>
     <dimen name="padding_login">200dp</dimen>
+
+
+    <dimen name="size_lv">30sp</dimen>
 </resources>

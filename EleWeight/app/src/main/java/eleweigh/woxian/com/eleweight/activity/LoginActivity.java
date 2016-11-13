@@ -1,5 +1,6 @@
-package eleweigh.woxian.com.eleweight;
+package eleweigh.woxian.com.eleweight.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -8,6 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import eleweigh.woxian.com.eleweight.R;
 
 public class LoginActivity extends BaseActivity {
     ImageView iv_close;
@@ -39,6 +42,7 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(LoginActivity.this, "login--" + isRemeberPass, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(LoginActivity.this, DetailListActivity.class));
             }
         });
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
