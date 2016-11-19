@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +19,9 @@ import java.util.regex.Pattern;
 import eleweigh.woxian.com.eleweight.R;
 import eleweigh.woxian.com.eleweight.bean.DetailBean;
 import eleweigh.woxian.com.eleweight.view.DetailAdapter;
+import eleweigh.woxian.com.eleweight.view.listview.XListView;
 
-public class DetailListActivity extends BaseActivity implements View.OnClickListener {
+public class DetailListActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener {
     DetailAdapter mDetailAdapter;
     TextView tv_address;//地址
     TextView tv_left;//剩余商品数量
@@ -29,7 +29,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     ImageView iv_user;//用户信息
     ImageView iv_logout;//登出
     ImageView iv_home;//home'
-    ListView lv_content;//listview
+    XListView lv_content;//listview
     TextView tv_brief;//目前分拣日期
     TextView tv_date_picker_start;//开始日期
     TextView tv_date_picker_end;//结束日期
@@ -62,7 +62,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         iv_user = (ImageView) findViewById(R.id.iv_user);
         iv_logout = (ImageView) findViewById(R.id.iv_logout);
         iv_home = (ImageView) findViewById(R.id.iv_home);
-        lv_content = (ListView) findViewById(R.id.lv_content);
+        lv_content = (XListView) findViewById(R.id.lv_content);
         tv_brief = (TextView) findViewById(R.id.tv_brief);
         tv_date_picker_start = (TextView) findViewById(R.id.tv_date_picker_start);
         tv_date_picker_end = (TextView) findViewById(R.id.tv_date_picker_end);
@@ -81,6 +81,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         simulation();
         mDetailAdapter = new DetailAdapter(this);
         lv_content.setAdapter(mDetailAdapter);
+        lv_content.setPullLoadEnable(true);
+        lv_content.setXListViewListener(this);
         mDetailAdapter.setData(mDetailBeanList);
         lv_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -152,18 +154,25 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
      * 找没有还称重的item
      */
     private void checkNoWeight() {
+        boolean hasNoWeight = false;
         label:
         for (int i = 0; i < mDetailBeanList.size(); i++) {
             String real = mDetailBeanList.get(i).getRead();
             if ("".equals(real)) {
                 /**读数是空的*/
                 mUnCheckPosition = i;
+                hasNoWeight = true;
+                mCurrentPosition = i;
                 break label;
             }
         }
         System.out.println("position---" + mUnCheckPosition);
-        lv_content.smoothScrollToPosition(mUnCheckPosition);
-        showInput(mUnCheckPosition);
+        if (hasNoWeight) {
+            lv_content.smoothScrollToPosition(mUnCheckPosition);
+            showInput(mUnCheckPosition);
+        } else {
+            Toast.makeText(DetailListActivity.this, "没有遗漏的条目", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -181,6 +190,9 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 isInputShow = true;
                 break;
             case R.id.btn_ok://确定
+                if (!isInputShow) {
+                    break;
+                }
                 String result = et_input.getText().toString().trim();
                 if (checkIsNum(result)) {
                     mDetailBeanList.get(mCurrentPosition).setRead(result + "斤");
@@ -188,7 +200,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 } else {
                     Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(this, "----OK___" + result, Toast.LENGTH_SHORT).show();
                 rl_full_input.setVisibility(View.GONE);
                 et_input.setText("");
                 break;
@@ -206,5 +217,15 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             case R.id.tv_date_picker_end://结束日期
                 break;
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        Toast.makeText(DetailListActivity.this, "onRefresh", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onLoadMore() {
+        Toast.makeText(DetailListActivity.this, "onLoadMore", Toast.LENGTH_SHORT).show();
     }
 }
