@@ -44,7 +44,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     EditText et_input;//输入界面的输入框
     List<DetailBean> mDetailBeanList = new ArrayList<>();
     private int mCurrentPosition = 0;
-    boolean isInputShow = false;//输入框是否【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【【9898989898989898989898989898989898989898989898989898989898989898989898989898989898989898333333333333333333333333333333333333333333***在现实
+    private int mUnCheckPosition = 0;//查漏的时候要用到的未称重的item
+    boolean isInputShow = false;//输入框是否*在显示
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,18 +90,22 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 showInput(position);
             }
         });
+        setListener();
     }
+
 
     private void showInput(int position) {
         DetailBean detailBean = mDetailBeanList.get(position);
         tv_num_input.setText(detailBean.getNum());
         tv_name_input.setText(detailBean.getName());
         tv_weight_input.setText(detailBean.getWeight());
-        tv_weight_input.setText(detailBean.getRead());
+        et_input.setText(detailBean.getRead());
+        et_input.setFocusable(true);
+        et_input.setFocusableInTouchMode(true);
+        et_input.requestFocus();
         rl_full_input.setVisibility(View.VISIBLE);
     }
 
-    int i = 0;
 
     private void simulation() {
         for (int i = 0; i < 20; i++) {
@@ -108,7 +113,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             DetailBean mDetailBean = new DetailBean();
             mDetailBean.setNum(i + "");
             mDetailBean.setName("大白菜");
-            mDetailBean.setWeight((50 - i) + "");
+            mDetailBean.setWeight((50 - i) + "斤");
             mDetailBean.setRead("");
             mDetailBeanList.add(mDetailBean);
         }
@@ -130,6 +135,36 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         }
     }
 
+    private void setListener() {
+        ll_full_input.setOnClickListener(this);
+        rl_full_input.setOnClickListener(this);
+        iv_logout.setOnClickListener(this);
+        iv_home.setOnClickListener(this);
+        btn_no.setOnClickListener(this);
+        btn_ok.setOnClickListener(this);
+        btn_check.setOnClickListener(this);
+        iv_user.setOnClickListener(this);
+        tv_date_picker_start.setOnClickListener(this);
+        tv_date_picker_end.setOnClickListener(this);
+    }
+
+    /**
+     * 找没有还称重的item
+     */
+    private void checkNoWeight() {
+        label:
+        for (int i = 0; i < mDetailBeanList.size(); i++) {
+            String real = mDetailBeanList.get(i).getRead();
+            if ("".equals(real)) {
+                /**读数是空的*/
+                mUnCheckPosition = i;
+                break label;
+            }
+        }
+        System.out.println("position---" + mUnCheckPosition);
+        lv_content.smoothScrollToPosition(mUnCheckPosition);
+        showInput(mUnCheckPosition);
+    }
 
     @Override
     public void onClick(View v) {
@@ -137,17 +172,28 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             case R.id.btn_no://不称重
                 rl_full_input.setVisibility(View.GONE);
                 break;
-            case R.id.rl_full_input://不称重
+            case R.id.rl_full_input://点击不显示
+                rl_full_input.setVisibility(View.GONE);
+                isInputShow = false;
+                break;
+            case R.id.ll_full_input://称重的界面
+                rl_full_input.setVisibility(View.VISIBLE);
+                isInputShow = true;
                 break;
             case R.id.btn_ok://确定
                 String result = et_input.getText().toString().trim();
                 if (checkIsNum(result)) {
-                    mDetailBeanList.get(mCurrentPosition).setRead(result);
+                    mDetailBeanList.get(mCurrentPosition).setRead(result + "斤");
                     mDetailAdapter.setData(mDetailBeanList);
+                } else {
+                    Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
                 }
+                Toast.makeText(this, "----OK___" + result, Toast.LENGTH_SHORT).show();
                 rl_full_input.setVisibility(View.GONE);
+                et_input.setText("");
                 break;
             case R.id.btn_check://查漏
+                checkNoWeight();
                 break;
             case R.id.iv_user://用户
                 break;

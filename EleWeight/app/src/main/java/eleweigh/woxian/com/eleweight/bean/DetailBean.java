@@ -8,7 +8,7 @@ public class DetailBean {
     private String num;
     private String name;
     private String weight;
-    private String read;
+    private String read = "";
 
     public DetailBean() {
     }

@@ -30,7 +30,6 @@ public class LoginActivity extends BaseActivity {
 
     protected void initView() {
         iv_close = (ImageView) findViewById(R.id.iv_close);
-
         et_login = (EditText) findViewById(R.id.et_login);
         et_psd = (EditText) findViewById(R.id.et_psd);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
@@ -38,9 +37,18 @@ public class LoginActivity extends BaseActivity {
     }
 
     protected void initData() {
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginActivity.this.finish();
+                ;
+            }
+        });
         tv_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String userName = et_login.getText().toString();
+                String userPassword = et_psd.getText().toString();
                 Toast.makeText(LoginActivity.this, "login--" + isRemeberPass, Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(LoginActivity.this, DetailListActivity.class));
             }

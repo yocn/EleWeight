@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/colorPrimaryDark">
+        android:background="@drawable/bg">
 
         <TextView
             android:id="@+id/tv_weight"
@@ -27,7 +27,7 @@
         android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/green"
+        android:background="@drawable/bt_bar"
         android:gravity="center_vertical|right"
         android:paddingRight="20dp"
         android:text="登陆智能分拣一体机 >"
