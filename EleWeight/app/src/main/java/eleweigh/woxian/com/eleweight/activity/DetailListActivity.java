@@ -1,9 +1,11 @@
 package eleweigh.woxian.com.eleweight.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -19,6 +22,7 @@ import java.util.regex.Pattern;
 import eleweigh.woxian.com.eleweight.R;
 import eleweigh.woxian.com.eleweight.bean.DetailBean;
 import eleweigh.woxian.com.eleweight.view.DetailAdapter;
+import eleweigh.woxian.com.eleweight.view.DoubleDatePickerDialog;
 import eleweigh.woxian.com.eleweight.view.listview.XListView;
 
 public class DetailListActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener {
@@ -38,6 +42,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
     RelativeLayout rl_full_input;//输入的时候的总界面
     LinearLayout ll_full_input;//白色的输入界面
+    LinearLayout ll_full_info;//白色的登录信息界面
+    TextView tv_login_info;//登录信息
     TextView tv_num_input;//输入界面的id
     TextView tv_name_input;//输入界面的名字
     TextView tv_weight_input;//输入界面的称重
@@ -71,11 +77,14 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
         rl_full_input = (RelativeLayout) findViewById(R.id.rl_full_input);
         ll_full_input = (LinearLayout) findViewById(R.id.ll_full_input);
+        ll_full_info = (LinearLayout) findViewById(R.id.ll_full_info);
+        tv_login_info = (TextView) findViewById(R.id.tv_login_info);
         tv_num_input = (TextView) findViewById(R.id.tv_num_input);
         tv_name_input = (TextView) findViewById(R.id.tv_name_input);
         tv_weight_input = (TextView) findViewById(R.id.tv_weight_input);
         et_input = (EditText) findViewById(R.id.et_input);
     }
+
 
     protected void initData() {
         simulation();
@@ -106,6 +115,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         et_input.setFocusableInTouchMode(true);
         et_input.requestFocus();
         rl_full_input.setVisibility(View.VISIBLE);
+        ll_full_input.setVisibility(View.VISIBLE);
     }
 
 
@@ -180,16 +190,21 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         switch (v.getId()) {
             case R.id.btn_no://不称重
                 rl_full_input.setVisibility(View.GONE);
+                ll_full_input.setVisibility(View.GONE);
                 break;
             case R.id.rl_full_input://点击不显示
                 rl_full_input.setVisibility(View.GONE);
+                ll_full_input.setVisibility(View.GONE);
+                ll_full_info.setVisibility(View.GONE);
                 isInputShow = false;
                 break;
             case R.id.ll_full_input://称重的界面
                 rl_full_input.setVisibility(View.VISIBLE);
+                ll_full_input.setVisibility(View.VISIBLE);
                 isInputShow = true;
                 break;
             case R.id.btn_ok://确定
+                Sy
                 if (!isInputShow) {
                     break;
                 }
@@ -201,31 +216,68 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                     Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
                 }
                 rl_full_input.setVisibility(View.GONE);
+                ll_full_input.setVisibility(View.GONE);
                 et_input.setText("");
                 break;
             case R.id.btn_check://查漏
                 checkNoWeight();
                 break;
             case R.id.iv_user://用户
+                rl_full_input.setVisibility(View.VISIBLE);
+                ll_full_info.setVisibility(View.VISIBLE);
                 break;
             case R.id.iv_logout://登出
                 break;
             case R.id.iv_home://home
                 break;
             case R.id.tv_date_picker_start://开始日期
+                showCalendarDialog();
                 break;
             case R.id.tv_date_picker_end://结束日期
+                showCalendarDialog();
                 break;
         }
     }
 
+    private void showCalendarDialog() {
+        Calendar c = Calendar.getInstance();
+        new DoubleDatePickerDialog(DetailListActivity.this, 0, new DoubleDatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker startDatePicker, int startYear, int startMonthOfYear,
+                                  int startDayOfMonth, DatePicker endDatePicker, int endYear, int endMonthOfYear,
+                                  int endDayOfMonth) {
+                String start = String.format("%d-%d-%d", startYear, startMonthOfYear + 1, startDayOfMonth);
+                String end = String.format("%d-%d-%d", endYear, endMonthOfYear + 1, endDayOfMonth);
+//                et.setText(textString);
+                tv_date_picker_start.setText(start);
+                tv_date_picker_end.setText(end);
+            }
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), true).show();
+    }
+
+    boolean b = false;
+
     @Override
     public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lv_content.stopRefresh(b);
+                b = !b;
+            }
+        }, 2000);
         Toast.makeText(DetailListActivity.this, "onRefresh", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onLoadMore() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                lv_content.stopLoadMore();
+            }
+        }, 2000);
         Toast.makeText(DetailListActivity.this, "onLoadMore", Toast.LENGTH_SHORT).show();
     }
 }

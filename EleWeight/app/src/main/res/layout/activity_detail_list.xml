@@ -184,7 +184,8 @@
             android:layout_marginTop="180dp"
             android:background="@drawable/reg_background"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_num_input"
@@ -249,6 +250,28 @@
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="60sp"
                 android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_full_info"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginLeft="200dp"
+            android:layout_marginRight="200dp"
+            android:layout_marginTop="130dp"
+            android:background="@drawable/reg_background"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_login_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="登录信息：李丽丽 (21221213242)"
+                android:textColor="@color/black"
+                android:textSize="30sp" />
 
         </LinearLayout>
 
