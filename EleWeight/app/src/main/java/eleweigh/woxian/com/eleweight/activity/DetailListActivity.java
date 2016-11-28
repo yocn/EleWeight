@@ -204,7 +204,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 isInputShow = true;
                 break;
             case R.id.btn_ok://确定
-                Sy
                 if (!isInputShow) {
                     break;
                 }
