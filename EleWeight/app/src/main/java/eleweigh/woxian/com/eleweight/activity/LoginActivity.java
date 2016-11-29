@@ -1,17 +1,20 @@
 package eleweigh.woxian.com.eleweight.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import eleweigh.woxian.com.eleweight.R;
 import eleweigh.woxian.com.eleweight.presenter.LoginPresenter;
+import eleweigh.woxian.com.eleweight.util.Loger;
+import eleweigh.woxian.com.eleweight.util.MyToast;
 import eleweigh.woxian.com.eleweight.util.RequestCallback;
 import eleweigh.woxian.com.eleweight.util.Utils;
 
@@ -20,7 +23,8 @@ public class LoginActivity extends BaseActivity {
     EditText et_login;
     EditText et_psd;
     CheckBox checkBox;
-    TextView tv_login;
+    Button btn_login;
+    Activity mContext;
     private boolean isRemeberPass = false;
     LoginPresenter mLoginPresenter;
 
@@ -28,6 +32,7 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mContext = this;
         initView();
         initData();
     }
@@ -37,7 +42,7 @@ public class LoginActivity extends BaseActivity {
         et_login = (EditText) findViewById(R.id.et_login);
         et_psd = (EditText) findViewById(R.id.et_psd);
         checkBox = (CheckBox) findViewById(R.id.checkBox);
-        tv_login = (TextView) findViewById(R.id.tv_login);
+        btn_login = (Button) findViewById(R.id.btn_login);
     }
 
     protected void initData() {
@@ -49,11 +54,19 @@ public class LoginActivity extends BaseActivity {
                 LoginActivity.this.finish();
             }
         });
-        tv_login.setOnClickListener(new View.OnClickListener() {
+        btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userName = et_login.getText().toString();
                 String userPassword = et_psd.getText().toString();
+                if ("".equals(userName.trim())) {
+                    MyToast.show(mContext, "请输入11位用户名");
+                    return;
+                }
+                if ("".equals(userPassword.trim())) {
+                    MyToast.show(mContext, "请输入密码");
+                    return;
+                }
                 login(userName, userPassword);
 
             }
@@ -81,7 +94,7 @@ public class LoginActivity extends BaseActivity {
 
         @Override
         public void fail(int code, String msg) {
-
+            MyToast.show(mContext, msg);
         }
     };
 

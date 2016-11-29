@@ -5,10 +5,14 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 
+import eleweigh.woxian.com.eleweight.bean.user.UserBean;
 import eleweigh.woxian.com.eleweight.util.BaseCallback;
 import eleweigh.woxian.com.eleweight.util.Contants;
+import eleweigh.woxian.com.eleweight.util.Loger;
 import eleweigh.woxian.com.eleweight.util.RequestCallback;
 
 /**
@@ -36,14 +40,31 @@ public class LoginPresenter extends BasePresenter {
             @Override
             public void onFailure(Request request, IOException e) {
                 if (callback != null) {
-                    callback.fail(404, "");
+
                 }
             }
 
             @Override
             public void onResponse(Response response) {
                 if (callback != null) {
-                    callback.success(response);
+                    String data = null;
+                    try {
+                        data = response.body().string();
+                        JSONObject object = new JSONObject(data);
+                        int code = object.getInt("code");
+                        JSONObject o = object.getJSONObject("data");
+                        if (code == 200) {
+                            String uid = o.getString("uid");
+                            String name = o.getString("name");
+                            String access_token = o.getString("access_token");
+                            callback.success(new UserBean(uid, name, access_token));
+                        } else {
+                            callback.fail(code, data);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             }
         });

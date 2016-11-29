@@ -22,7 +22,7 @@
                 android:layout_height="@dimen/height_login"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/home" />
+                android:src="@drawable/icon7" />
 
             <TextView
                 android:id="@+id/tv_address"
@@ -63,6 +63,7 @@
 
             <ImageView
                 android:id="@+id/iv_user"
+                android:layout_marginRight="20dp"
                 android:layout_width="@dimen/height_login"
                 android:layout_height="@dimen/height_login"
                 android:src="@drawable/icon6" />
@@ -73,6 +74,7 @@
                 android:layout_height="@dimen/height_login"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:visibility="gone"
                 android:src="@drawable/logoff" />
         </LinearLayout>
 

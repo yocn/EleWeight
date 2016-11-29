@@ -140,8 +140,8 @@
                 android:textSize="25sp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_login"
+        <Button
+            android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_et"
             android:background="@drawable/bt_blue_selector"

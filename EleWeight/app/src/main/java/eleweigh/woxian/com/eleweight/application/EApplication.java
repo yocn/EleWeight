@@ -7,4 +7,6 @@ import android.app.Application;
  */
 
 public class EApplication extends Application {
+    public static String tag = "woxain";
+    public static boolean isShowLog = true;
 }
