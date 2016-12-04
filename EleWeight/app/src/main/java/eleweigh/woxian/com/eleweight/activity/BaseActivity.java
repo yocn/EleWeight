@@ -19,4 +19,6 @@ public class BaseActivity extends Activity {
     protected void initData() {
 
     }
+
+    
 }

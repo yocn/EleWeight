@@ -1,5 +1,6 @@
 package eleweigh.woxian.com.eleweight.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -20,12 +21,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import eleweigh.woxian.com.eleweight.R;
+import eleweigh.woxian.com.eleweight.application.EApplication;
 import eleweigh.woxian.com.eleweight.bean.DetailBean;
+import eleweigh.woxian.com.eleweight.presenter.WeightPresenter;
+import eleweigh.woxian.com.eleweight.util.SharedPreferencesUtil;
 import eleweigh.woxian.com.eleweight.view.DetailAdapter;
 import eleweigh.woxian.com.eleweight.view.DoubleDatePickerDialog;
 import eleweigh.woxian.com.eleweight.view.listview.XListView;
 
-public class DetailListActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener {
+public class DetailListActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener, WeightPresenter.CastWeightInterface {
     DetailAdapter mDetailAdapter;
     TextView tv_address;//地址
     TextView tv_left;//剩余商品数量
@@ -42,16 +46,19 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
     RelativeLayout rl_full_input;//输入的时候的总界面
     LinearLayout ll_full_input;//白色的输入界面
-    LinearLayout ll_full_info;//白色的登录信息界面
+    RelativeLayout ll_full_info;//白色的登录信息界面
     TextView tv_login_info;//登录信息
     TextView tv_num_input;//输入界面的id
     TextView tv_name_input;//输入界面的名字
     TextView tv_weight_input;//输入界面的称重
     EditText et_input;//输入界面的输入框
+    Button btn_logout;//个人信息页的登出按钮
+    ImageView iv_close;//个人信息页的关闭按钮
     List<DetailBean> mDetailBeanList = new ArrayList<>();
     private int mCurrentPosition = 0;
     private int mUnCheckPosition = 0;//查漏的时候要用到的未称重的item
     boolean isInputShow = false;//输入框是否*在显示
+    Activity mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +69,9 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     }
 
     protected void initView() {
+
+        iv_close = (ImageView) findViewById(R.id.iv_close);
+        btn_logout = (Button) findViewById(R.id.btn_logout);
         tv_address = (TextView) findViewById(R.id.tv_address);
         tv_left = (TextView) findViewById(R.id.tv_left);
         btn_check = (Button) findViewById(R.id.btn_check);
@@ -77,7 +87,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
         rl_full_input = (RelativeLayout) findViewById(R.id.rl_full_input);
         ll_full_input = (LinearLayout) findViewById(R.id.ll_full_input);
-        ll_full_info = (LinearLayout) findViewById(R.id.ll_full_info);
+        ll_full_info = (RelativeLayout) findViewById(R.id.ll_full_info);
         tv_login_info = (TextView) findViewById(R.id.tv_login_info);
         tv_num_input = (TextView) findViewById(R.id.tv_num_input);
         tv_name_input = (TextView) findViewById(R.id.tv_name_input);
@@ -87,6 +97,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
 
     protected void initData() {
+        mContext = this;
+        WeightPresenter.getInstance().registerCastWeightWatcher(this);
         simulation();
         mDetailAdapter = new DetailAdapter(this);
         lv_content.setAdapter(mDetailAdapter);
@@ -158,6 +170,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         iv_user.setOnClickListener(this);
         tv_date_picker_start.setOnClickListener(this);
         tv_date_picker_end.setOnClickListener(this);
+        iv_close.setOnClickListener(this);
+        btn_logout.setOnClickListener(this);
     }
 
     /**
@@ -225,9 +239,12 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 rl_full_input.setVisibility(View.VISIBLE);
                 ll_full_info.setVisibility(View.VISIBLE);
                 break;
-            case R.id.iv_logout://登出
-                break;
             case R.id.iv_home://home
+                break;
+            case R.id.btn_logout://登出
+                EApplication.isLoginSuccess = false;
+                SharedPreferencesUtil.getInstance(mContext).saveBoolean(EApplication.LoginString, false);
+                finish();
                 break;
             case R.id.tv_date_picker_start://开始日期
                 showCalendarDialog();
@@ -278,5 +295,16 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             }
         }, 2000);
         Toast.makeText(DetailListActivity.this, "onLoadMore", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        WeightPresenter.getInstance().unRegisterCasrWeightWatcher(this);
+    }
+
+    @Override
+    public void onWeightNumChanged(String weight) {
+
     }
 }

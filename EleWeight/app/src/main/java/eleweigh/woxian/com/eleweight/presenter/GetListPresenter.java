@@ -18,11 +18,11 @@ import eleweigh.woxian.com.eleweight.util.RequestCallback;
  * Created by Yocn on 16.11.28.
  */
 
-public class LoginPresenter extends BasePresenter {
+public class GetListPresenter extends BasePresenter {
     RequestCallback callback;
     OkHttpClient mOkHttpClient;
 
-    public LoginPresenter(RequestCallback callback) {
+    public GetListPresenter(RequestCallback callback) {
         this.callback = callback;
         //创建okHttpClient对象
         mOkHttpClient = new OkHttpClient();

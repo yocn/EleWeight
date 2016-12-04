@@ -63,9 +63,9 @@
 
             <ImageView
                 android:id="@+id/iv_user"
-                android:layout_marginRight="20dp"
                 android:layout_width="@dimen/height_login"
                 android:layout_height="@dimen/height_login"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/icon6" />
 
             <ImageView
@@ -74,8 +74,8 @@
                 android:layout_height="@dimen/height_login"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:visibility="gone"
-                android:src="@drawable/logoff" />
+                android:src="@drawable/logoff"
+                android:visibility="gone" />
         </LinearLayout>
 
         <eleweigh.woxian.com.eleweight.view.listview.XListView
@@ -255,7 +255,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/ll_full_info"
             android:layout_width="match_parent"
             android:layout_height="250dp"
@@ -264,18 +264,34 @@
             android:layout_marginTop="130dp"
             android:background="@drawable/reg_background"
             android:gravity="center"
-            android:orientation="horizontal"
             android:visibility="gone">
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="注销" />
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/icon9" />
 
             <TextView
                 android:id="@+id/tv_login_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:text="登录信息：李丽丽 (21221213242)"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 

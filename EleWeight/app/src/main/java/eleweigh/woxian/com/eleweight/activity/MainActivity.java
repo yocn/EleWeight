@@ -6,8 +6,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import eleweigh.woxian.com.eleweight.R;
+import eleweigh.woxian.com.eleweight.application.EApplication;
+import eleweigh.woxian.com.eleweight.presenter.WeightPresenter;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements WeightPresenter.CastWeightInterface {
     TextView tv_weight;
     TextView login;
 
@@ -25,13 +27,29 @@ public class MainActivity extends BaseActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(i);
+                if (EApplication.isLoginSuccess) {
+                    Intent i = new Intent(MainActivity.this, DetailListActivity.class);
+                    startActivity(i);
+                } else {
+                    Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(i);
+                }
             }
         });
     }
 
     protected void initData() {
+        WeightPresenter.getInstance().registerCastWeightWatcher(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        WeightPresenter.getInstance().unRegisterCasrWeightWatcher(this);
+    }
+
+    @Override
+    public void onWeightNumChanged(String weight) {
 
     }
 }
