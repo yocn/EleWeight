@@ -24,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
+import android.widget.TimePicker;
 
 import java.lang.reflect.Field;
 
@@ -48,6 +49,9 @@ public class DoubleDatePickerDialog extends AlertDialog implements OnClickListen
 
     private final DatePicker mDatePicker_start;
     private final DatePicker mDatePicker_end;
+    private final TimePicker mTimePicker_start;
+    private final TimePicker mTimePicker_end;
+
     private final OnDateSetListener mCallBack;
 
     /**
@@ -66,7 +70,10 @@ public class DoubleDatePickerDialog extends AlertDialog implements OnClickListen
          * @param endDayOfMonth
          */
         void onDateSet(DatePicker startDatePicker, int startYear, int startMonthOfYear, int startDayOfMonth,
-                       DatePicker endDatePicker, int endYear, int endMonthOfYear, int endDayOfMonth);
+                       DatePicker endDatePicker, int endYear, int endMonthOfYear, int endDayOfMonth,
+                       TimePicker startTimePicker, int startHour, int startMin,
+                       TimePicker endTimePicker, int endHour, int endMin
+        );
     }
 
     /**
@@ -111,6 +118,8 @@ public class DoubleDatePickerDialog extends AlertDialog implements OnClickListen
         setView(view);
         mDatePicker_start = (DatePicker) view.findViewById(R.id.datePickerStart);
         mDatePicker_end = (DatePicker) view.findViewById(R.id.datePickerEnd);
+        mTimePicker_start = (TimePicker) view.findViewById(R.id.time_picker_start);
+        mTimePicker_end = (TimePicker) view.findViewById(R.id.time_picker_end);
         mDatePicker_start.init(year, monthOfYear, dayOfMonth, this);
         mDatePicker_end.init(year, monthOfYear, dayOfMonth, this);
         // updateTitle(year, monthOfYear, dayOfMonth);
@@ -209,7 +218,10 @@ public class DoubleDatePickerDialog extends AlertDialog implements OnClickListen
             mDatePicker_end.clearFocus();
             mCallBack.onDateSet(mDatePicker_start, mDatePicker_start.getYear(), mDatePicker_start.getMonth(),
                     mDatePicker_start.getDayOfMonth(), mDatePicker_end, mDatePicker_end.getYear(),
-                    mDatePicker_end.getMonth(), mDatePicker_end.getDayOfMonth());
+                    mDatePicker_end.getMonth(), mDatePicker_end.getDayOfMonth(),
+                    mTimePicker_start, mTimePicker_start.getCurrentHour(), mTimePicker_start.getCurrentMinute(),
+                    mTimePicker_end, mTimePicker_start.getCurrentHour(), mTimePicker_end.getCurrentMinute()
+            );
         }
     }
 

@@ -114,11 +114,12 @@ public class LoginActivity extends BaseActivity {
                     tv_wrong_password.setVisibility(View.GONE);
                 }
             });
+            UserBean use = (UserBean) o;
+            EApplication.user = use;
             if (isRemeberPass) {
                 /**如果勾选了记住密码，登录成功之后记住密码*/
                 EApplication.isLoginSuccess = true;
                 SharedPreferencesUtil.getInstance(mContext).saveBoolean(EApplication.LoginString, true);
-                UserBean use = (UserBean) o;
                 SharedPreferencesUtil.getInstance(mContext).saveUser(use);
             }
             startActivity(new Intent(LoginActivity.this, DetailListActivity.class));

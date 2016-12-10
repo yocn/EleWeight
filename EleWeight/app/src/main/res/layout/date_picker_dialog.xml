@@ -23,6 +23,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:calendarViewShown="false" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:singleLine="true"
+            android:text="请选择时间"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TimePicker
+            android:id="@+id/time_picker_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip" />
     </LinearLayout>
 
     <ImageView
@@ -47,6 +62,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:calendarViewShown="false" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:singleLine="true"
+            android:text="请选择时间"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TimePicker
+            android:id="@+id/time_picker_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip" />
+
     </LinearLayout>
 
 </LinearLayout>

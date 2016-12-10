@@ -108,11 +108,10 @@
                     android:textSize="25sp" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginLeft="105dp"
                     android:layout_weight="3"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <TextView
@@ -176,13 +175,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/detail_bottom"
-        android:background="@color/trans"
-        android:visibility="gone">
+        android:background="@color/trans">
 
         <LinearLayout
             android:id="@+id/ll_full_input"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="150dp"
+            android:layout_marginLeft="-10dp"
+            android:layout_marginRight="-10dp"
             android:layout_marginTop="180dp"
             android:background="@drawable/reg_background"
             android:gravity="center_vertical"
@@ -193,11 +193,11 @@
                 android:id="@+id/tv_num_input"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:gravity="center_horizontal"
                 android:text="06"
                 android:textColor="@color/red"
-                android:textSize="60sp"
+                android:textSize="@dimen/size_lv"
                 android:textStyle="bold" />
 
             <View
@@ -213,7 +213,7 @@
                 android:gravity="center_horizontal"
                 android:text="大白菜"
                 android:textColor="@color/red"
-                android:textSize="60sp"
+                android:textSize="@dimen/size_input"
                 android:textStyle="bold" />
 
             <View
@@ -229,7 +229,7 @@
                 android:gravity="center_horizontal"
                 android:text="50斤"
                 android:textColor="@color/red"
-                android:textSize="60sp"
+                android:textSize="@dimen/size_input"
                 android:textStyle="bold" />
 
             <View
@@ -245,12 +245,12 @@
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="50dp"
                 android:layout_marginTop="25dp"
-                android:layout_weight="5"
+                android:layout_weight="4"
                 android:background="@drawable/bg_et_detail_input"
                 android:singleLine="true"
                 android:textColor="@color/red"
                 android:textCursorDrawable="@drawable/cursor"
-                android:textSize="60sp"
+                android:textSize="@dimen/size_input"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -262,34 +262,38 @@
             android:layout_marginLeft="200dp"
             android:layout_marginRight="200dp"
             android:layout_marginTop="130dp"
-            android:background="@drawable/reg_background"
-            android:gravity="center"
-            android:visibility="gone">
+            android:background="@drawable/reg_background">
 
-            <Button
-                android:id="@+id/btn_logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:text="注销" />
 
             <ImageView
                 android:id="@+id/iv_close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
                 android:src="@drawable/icon9" />
 
             <TextView
                 android:id="@+id/tv_login_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="80dp"
                 android:text="登录信息：李丽丽 (21221213242)"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/bt_green_selector"
+                android:text="注销" />
 
         </RelativeLayout>
 

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eleweigh.woxian.com.eleweight.R;
-import eleweigh.woxian.com.eleweight.bean.DetailBean;
+import eleweigh.woxian.com.eleweight.bean.product.ProductBean;
 
 /**
  * Created by Hui on 2016/11/12.
@@ -19,15 +19,14 @@ import eleweigh.woxian.com.eleweight.bean.DetailBean;
 
 public class DetailAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
-    private List<DetailBean> mDetailBeanList = new ArrayList<>();
+    private List<ProductBean> mDetailBeanList = new ArrayList<>();
 
     public DetailAdapter(Context context) {
         this.mInflater = LayoutInflater.from(context);
     }
 
-    public void setData(List<DetailBean> mDetailBeanList) {
+    public void setData(List<ProductBean> mDetailBeanList) {
         this.mDetailBeanList = mDetailBeanList;
-        System.out.println(mDetailBeanList.toString());
         this.notifyDataSetChanged();
     }
 
@@ -49,7 +48,7 @@ public class DetailAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
-        DetailBean detailBean = mDetailBeanList.get(position);
+        ProductBean detailBean = mDetailBeanList.get(position);
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = mInflater.inflate(R.layout.item_detail, null);
@@ -61,10 +60,10 @@ public class DetailAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_num.setText(detailBean.getNum());
-        holder.tv_name.setText(detailBean.getName());
-        holder.tv_weight.setText(detailBean.getWeight());
-        holder.tv_real.setText(detailBean.getRead());
+        holder.tv_num.setText(detailBean.getLine_num());
+        holder.tv_name.setText(detailBean.getGoods_name());
+        holder.tv_weight.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
+        holder.tv_real.setText(detailBean.getQuantity_real());
         return convertView;
     }
 

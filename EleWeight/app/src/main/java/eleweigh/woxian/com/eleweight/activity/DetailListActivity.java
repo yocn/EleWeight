@@ -2,7 +2,6 @@ package eleweigh.woxian.com.eleweight.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,18 +11,23 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import eleweigh.woxian.com.eleweight.R;
 import eleweigh.woxian.com.eleweight.application.EApplication;
-import eleweigh.woxian.com.eleweight.bean.DetailBean;
+import eleweigh.woxian.com.eleweight.bean.product.ProductBean;
+import eleweigh.woxian.com.eleweight.bean.product.ProductListBean;
+import eleweigh.woxian.com.eleweight.presenter.GetListPresenter;
+import eleweigh.woxian.com.eleweight.presenter.QuantityPresenter;
 import eleweigh.woxian.com.eleweight.presenter.WeightPresenter;
+import eleweigh.woxian.com.eleweight.util.Loger;
+import eleweigh.woxian.com.eleweight.util.RequestCallback;
 import eleweigh.woxian.com.eleweight.util.SharedPreferencesUtil;
 import eleweigh.woxian.com.eleweight.view.DetailAdapter;
 import eleweigh.woxian.com.eleweight.view.DoubleDatePickerDialog;
@@ -54,11 +58,16 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     EditText et_input;//输入界面的输入框
     Button btn_logout;//个人信息页的登出按钮
     ImageView iv_close;//个人信息页的关闭按钮
-    List<DetailBean> mDetailBeanList = new ArrayList<>();
     private int mCurrentPosition = 0;
+    private String mCurrentUnit = "";
+    private String mCurrentOrderId = "";
     private int mUnCheckPosition = 0;//查漏的时候要用到的未称重的item
     boolean isInputShow = false;//输入框是否*在显示
     Activity mContext;
+    QuantityPresenter mQuantityPresenter;
+    GetListPresenter mGetListPresenter;
+    ProductListBean mProductListBean = null;
+    ArrayList<ProductBean> mProductBeanList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +78,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     }
 
     protected void initView() {
-
         iv_close = (ImageView) findViewById(R.id.iv_close);
         btn_logout = (Button) findViewById(R.id.btn_logout);
         tv_address = (TextView) findViewById(R.id.tv_address);
@@ -99,30 +107,38 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     protected void initData() {
         mContext = this;
         WeightPresenter.getInstance().registerCastWeightWatcher(this);
-        simulation();
+        mGetListPresenter = new GetListPresenter(mGetListCallback);
+        mQuantityPresenter = new QuantityPresenter(mQuantityCallback);
         mDetailAdapter = new DetailAdapter(this);
         lv_content.setAdapter(mDetailAdapter);
-        lv_content.setPullLoadEnable(true);
+        lv_content.setPullLoadEnable(false);
         lv_content.setXListViewListener(this);
-        mDetailAdapter.setData(mDetailBeanList);
+        mDetailAdapter.setData(mProductBeanList);
         lv_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(DetailListActivity.this, position + "", Toast.LENGTH_SHORT).show();
-                mCurrentPosition = position;
-                showInput(position);
+                mCurrentPosition = position - 1;
+                mCurrentUnit = mProductBeanList.get(mCurrentPosition).getQuantity_unit();
+                showInput(mCurrentPosition);
             }
         });
         setListener();
+        loadData();
+    }
+
+    private void loadData() {
+        if (EApplication.user == null) return;
+        mGetListPresenter.getList(EApplication.user.getUid(), EApplication.user.getAccess_token());
     }
 
 
     private void showInput(int position) {
-        DetailBean detailBean = mDetailBeanList.get(position);
-        tv_num_input.setText(detailBean.getNum());
-        tv_name_input.setText(detailBean.getName());
-        tv_weight_input.setText(detailBean.getWeight());
-        et_input.setText(detailBean.getRead());
+        isInputShow = true;
+        ProductBean detailBean = mProductBeanList.get(position);
+        tv_num_input.setText(detailBean.getLine_num());
+        tv_name_input.setText(detailBean.getGoods_name());
+        tv_weight_input.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
+        et_input.setText(detailBean.getQuantity_real());
         et_input.setFocusable(true);
         et_input.setFocusableInTouchMode(true);
         et_input.requestFocus();
@@ -131,16 +147,51 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     }
 
 
-    private void simulation() {
-        for (int i = 0; i < 20; i++) {
-            i++;
-            DetailBean mDetailBean = new DetailBean();
-            mDetailBean.setNum(i + "");
-            mDetailBean.setName("大白菜");
-            mDetailBean.setWeight((50 - i) + "斤");
-            mDetailBean.setRead("");
-            mDetailBeanList.add(mDetailBean);
+    /**
+     * 称重
+     */
+    RequestCallback mQuantityCallback = new RequestCallback() {
+        @Override
+        public void success(Object o) {
+            Loger.d(o.toString());
         }
+
+        @Override
+        public void fail(int code, String msg) {
+            Loger.d(code + "----" + msg);
+        }
+    };
+
+    /**
+     * 获取列表
+     */
+    RequestCallback mGetListCallback = new RequestCallback() {
+        @Override
+        public void success(final Object o) {
+            Loger.d(o.toString());
+            if (o != null && o instanceof ProductListBean) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyAllView((ProductListBean) o);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void fail(int code, String msg) {
+            Loger.d("code" + code + "----msg---" + msg);
+        }
+    };
+
+    private void notifyAllView(ProductListBean bean) {
+        mProductListBean = bean;
+        mCurrentOrderId = mProductListBean.getOrder_id();
+        mProductBeanList = bean.getGoods_list();
+        mDetailAdapter.setData(mProductBeanList);
+        lv_content.stopRefresh(true);
+        tv_left.setText("剩余商品数量：" + bean.getGoods_count());
     }
 
     /**
@@ -180,8 +231,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     private void checkNoWeight() {
         boolean hasNoWeight = false;
         label:
-        for (int i = 0; i < mDetailBeanList.size(); i++) {
-            String real = mDetailBeanList.get(i).getRead();
+        for (int i = 0; i < mProductBeanList.size(); i++) {
+            String real = mProductBeanList.get(i).getQuantity_real();
             if ("".equals(real)) {
                 /**读数是空的*/
                 mUnCheckPosition = i;
@@ -205,6 +256,11 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             case R.id.btn_no://不称重
                 rl_full_input.setVisibility(View.GONE);
                 ll_full_input.setVisibility(View.GONE);
+                ProductBean productBean = mProductBeanList.get(mCurrentPosition);
+                String read = productBean.getQuantity();
+                productBean.setQuantity_real(read + mCurrentUnit);
+                mDetailAdapter.setData(mProductBeanList);
+                mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
                 break;
             case R.id.rl_full_input://点击不显示
                 rl_full_input.setVisibility(View.GONE);
@@ -223,8 +279,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 }
                 String result = et_input.getText().toString().trim();
                 if (checkIsNum(result)) {
-                    mDetailBeanList.get(mCurrentPosition).setRead(result + "斤");
-                    mDetailAdapter.setData(mDetailBeanList);
+                    ProductBean product = mProductBeanList.get(mCurrentPosition);
+                    product.setQuantity_real(result + mCurrentUnit);
+                    mDetailAdapter.setData(mProductBeanList);
+                    mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
                 } else {
                     Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
                 }
@@ -240,6 +298,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ll_full_info.setVisibility(View.VISIBLE);
                 break;
             case R.id.iv_home://home
+                break;
+            case R.id.iv_close://我的信息，关闭
+                rl_full_input.setVisibility(View.GONE);
+                ll_full_info.setVisibility(View.GONE);
                 break;
             case R.id.btn_logout://登出
                 EApplication.isLoginSuccess = false;
@@ -262,39 +324,24 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onDateSet(DatePicker startDatePicker, int startYear, int startMonthOfYear,
                                   int startDayOfMonth, DatePicker endDatePicker, int endYear, int endMonthOfYear,
-                                  int endDayOfMonth) {
-                String start = String.format("%d-%d-%d", startYear, startMonthOfYear + 1, startDayOfMonth);
-                String end = String.format("%d-%d-%d", endYear, endMonthOfYear + 1, endDayOfMonth);
-//                et.setText(textString);
+                                  int endDayOfMonth, TimePicker startTimePicker, int startHour, int startMin,
+                                  TimePicker endTimePicker, int endHour, int endMin) {
+                String start = String.format("%d-%d-%d %d:%d", startYear, startMonthOfYear + 1, startDayOfMonth, startHour, startMin);
+                String end = String.format("%d-%d-%d %d:%d", endYear, endMonthOfYear + 1, endDayOfMonth, endHour, endMin);
                 tv_date_picker_start.setText(start);
                 tv_date_picker_end.setText(end);
             }
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), true).show();
     }
 
-    boolean b = false;
-
     @Override
     public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                lv_content.stopRefresh(b);
-                b = !b;
-            }
-        }, 2000);
-        Toast.makeText(DetailListActivity.this, "onRefresh", Toast.LENGTH_SHORT).show();
+        loadData();
     }
 
     @Override
     public void onLoadMore() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                lv_content.stopLoadMore();
-            }
-        }, 2000);
-        Toast.makeText(DetailListActivity.this, "onLoadMore", Toast.LENGTH_SHORT).show();
+//        lv_content.stopLoadMore();
     }
 
     @Override

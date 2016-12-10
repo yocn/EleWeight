@@ -13,7 +13,7 @@ public class EApplication extends Application {
     public static String tag = "woxain";
     public static boolean isShowLog = true;
     public static boolean isLoginSuccess = false;//是否记住密码
-    public UserBean user = null;
+    public static UserBean user = null;
     public static Application context;
     public static String LoginString = "isLoginSuccess";
 
