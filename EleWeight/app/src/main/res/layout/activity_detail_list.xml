@@ -262,7 +262,8 @@
             android:layout_marginLeft="200dp"
             android:layout_marginRight="200dp"
             android:layout_marginTop="130dp"
-            android:background="@drawable/reg_background">
+            android:background="@drawable/reg_background"
+            android:visibility="gone">
 
 
             <ImageView
@@ -289,8 +290,8 @@
                 android:id="@+id/btn_logout"
                 android:layout_width="150dp"
                 android:layout_height="50dp"
-                android:layout_centerHorizontal="true"
                 android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/bt_green_selector"
                 android:text="注销" />

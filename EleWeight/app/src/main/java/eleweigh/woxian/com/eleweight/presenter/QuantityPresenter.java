@@ -42,7 +42,7 @@ public class QuantityPresenter extends BasePresenter {
      */
     public void quantity(String order_id, String goods_id, String customer_id, String unit_id,
                          String quantity_real, String access_token) {
-        String url = Contants.BASE_URL + Contants.LOGIN +
+        String url = Contants.BASE_URL + Contants.CHECK +
                 "?order_id=" + order_id + "&goods_id=" + goods_id
                 + "&customer_id=" + customer_id + "&unit_id=" + unit_id
                 + "&quantity_real=" + quantity_real + "&access_token=" + access_token;

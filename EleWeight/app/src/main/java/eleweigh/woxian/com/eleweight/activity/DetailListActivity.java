@@ -138,7 +138,13 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         tv_num_input.setText(detailBean.getLine_num());
         tv_name_input.setText(detailBean.getGoods_name());
         tv_weight_input.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
-        et_input.setText(detailBean.getQuantity_real());
+        if (detailBean.getQuantity_real() != null && !"".equals(detailBean.getQuantity_real())) {
+            /**数量不为空的情况下*/
+            et_input.setText(detailBean.getQuantity_real());
+        } else {
+            et_input.setText("");
+        }
+
         et_input.setFocusable(true);
         et_input.setFocusableInTouchMode(true);
         et_input.requestFocus();
@@ -173,7 +179,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        notifyAllView((ProductListBean) o);
+                        ProductListBean bean = (ProductListBean) o;
+                        notifyAllView(bean);
+                        tv_date_picker_start.setText(bean.getStart_date());
+                        tv_date_picker_end.setText(bean.getEnd_date());
                     }
                 });
             }
