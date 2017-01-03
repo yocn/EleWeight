@@ -15,6 +15,7 @@ import eleweigh.woxian.com.eleweight.android_serialport_api.SerialPortFinder;
 import eleweigh.woxian.com.eleweight.application.EApplication;
 import eleweigh.woxian.com.eleweight.bean.serial.ComBean;
 import eleweigh.woxian.com.eleweight.presenter.WeightPresenter;
+import eleweigh.woxian.com.eleweight.util.Loger;
 
 public class MainActivity extends BaseActivity implements WeightPresenter.CastWeightInterface {
     TextView tv_weight;
@@ -32,13 +33,15 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
     }
 
     private void initSerialPortCom() {
+        Toast.makeText(this, "initSerialPortCom", Toast.LENGTH_SHORT).show();
+        ComC = new SerialControl();
         mSerialPortFinder = new SerialPortFinder();
-        String[] entryValues = mSerialPortFinder.getAllDevicesPath();
+//        String[] entryValues = mSerialPortFinder.getAllDevicesPath();
 
-        ComC.setPort("8888");
-        ComC.setBaudRate("200");
+        ComC.setPort("/dev/ttyS1");
+        ComC.setBaudRate("9600");
         OpenComPort(ComC);
-
+        Loger.d("initSerialPortCom;---------");
     }
 
     protected void initView() {
@@ -88,15 +91,17 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
             //直接刷新显示，接收数据量大时，卡顿明显，但接收与显示同步。
             //用线程定时刷新显示可以获得较流畅的显示效果，但是接收数据速度快于显示速度时，显示会滞后。
             //最终效果差不多-_-，线程定时刷新稍好一些。
-            DispQueue.AddQueue(ComRecData);//线程定时刷新显示(推荐)
-            /*
-            runOnUiThread(new Runnable()//直接刷新显示
-			{
-				public void run()
-				{
-					DispRecData(ComRecData);
-				}
-			});*/
+//            DispQueue.AddQueue(ComRecData);//线程定时刷新显示(推荐)
+
+            //直接刷新显示
+            runOnUiThread(new Runnable() {
+                public void run() {
+//					DispRecData(ComRecData);
+
+                    tv_weight.setText("" + ComRecData.bRec);
+                    Loger.d("------------------------");
+                }
+            });
         }
     }
 
@@ -111,12 +116,16 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
     //----------------------------------------------------打开串口
     private void OpenComPort(SerialHelper ComPort) {
         try {
+            Loger.d("OpenComPort;---------");
             ComPort.open();
         } catch (SecurityException e) {
+            Loger.d("SecurityException;---------");
             ShowMessage("打开串口失败:没有串口读/写权限!");
         } catch (IOException e) {
+            Loger.d("IOException;---------");
             ShowMessage("打开串口失败:未知错误!");
         } catch (InvalidParameterException e) {
+            Loger.d("InvalidParameterException;---------");
             ShowMessage("打开串口失败:参数错误!");
         }
     }
