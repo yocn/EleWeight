@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import eleweigh.woxian.com.eleweight.bean.user.UserBean;
+import eleweigh.woxian.com.eleweight.util.CrashHandler;
 import eleweigh.woxian.com.eleweight.util.Loger;
 import eleweigh.woxian.com.eleweight.util.SharedPreferencesUtil;
 
@@ -38,13 +40,20 @@ public class EApplication extends Application {
         isLoginSuccess = SharedPreferencesUtil.getInstance(this).getBoolean(LoginString);
         user = SharedPreferencesUtil.getInstance(this).getUser();
         Loger.d("-----------------------------------");
+        Toast.makeText(this, "sadsad", Toast.LENGTH_LONG).show();
         initUmengData();
+        init();
     }
 
     private void initUmengData() {
-        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
+//        MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
 //        MobclickAgent.setDebugMode(true);
         Loger.d("----------" + getDeviceInfo(this));
+    }
+
+    private void init() {
+        CrashHandler mCrashHandler = CrashHandler.getInstance();
+        mCrashHandler.getInstance().setCustomCrashHanler(this);
     }
 
 

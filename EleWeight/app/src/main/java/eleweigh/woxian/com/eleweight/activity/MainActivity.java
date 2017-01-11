@@ -15,10 +15,12 @@ import eleweigh.woxian.com.eleweight.android_serialport_api.SerialPortFinder;
 import eleweigh.woxian.com.eleweight.application.EApplication;
 import eleweigh.woxian.com.eleweight.bean.serial.ComBean;
 import eleweigh.woxian.com.eleweight.presenter.WeightPresenter;
+import eleweigh.woxian.com.eleweight.util.CrashHandler;
 import eleweigh.woxian.com.eleweight.util.Loger;
 
 public class MainActivity extends BaseActivity implements WeightPresenter.CastWeightInterface {
     TextView tv_weight;
+    TextView tv_exception;
     TextView login;
     SerialPortFinder mSerialPortFinder;
     SerialControl ComC;
@@ -32,6 +34,7 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         initSerialPortCom();
     }
 
+
     private void initSerialPortCom() {
         Toast.makeText(this, "initSerialPortCom", Toast.LENGTH_SHORT).show();
         ComC = new SerialControl();
@@ -40,16 +43,18 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
 
         ComC.setPort("/dev/ttyS1");
         ComC.setBaudRate("9600");
-        OpenComPort(ComC);
+//        OpenComPort(ComC);
         Loger.d("initSerialPortCom;---------");
     }
 
     protected void initView() {
+        tv_exception = (TextView) findViewById(R.id.tv_exception);
         tv_weight = (TextView) findViewById(R.id.tv_weight);
         login = (TextView) findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                OpenComPort(ComC);
                 if (EApplication.isLoginSuccess) {
                     Intent i = new Intent(MainActivity.this, DetailListActivity.class);
                     startActivity(i);

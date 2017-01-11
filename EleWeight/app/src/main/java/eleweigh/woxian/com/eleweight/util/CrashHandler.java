@@ -1,130 +1,200 @@
 package eleweigh.woxian.com.eleweight.util;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Looper;
+import android.util.Log;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
- * 接替系统对程序出现的异常进行处理 UncaughtException处理类,当程序发生Uncaught异常的时候,有该类来接管程序,并记录发送错误报告.
- * <p>
- * 需要在Application中注册，为了要在程序启动器就监控整个程序。
+ * 自定义系统的Crash捕捉类，用Toast替换系统的对话框
+ * 将软件版本信息，设备信息，出错信息保存在sd卡中，你可以上传到服务器中
+ *
+ * @author xiaanming
  */
 public class CrashHandler implements UncaughtExceptionHandler {
+    private static final String TAG = "Activity";
+    private Context mContext;
+    private static final String SDCARD_ROOT = Environment.getExternalStorageDirectory().toString();
+    private static CrashHandler mInstance = new CrashHandler();
 
-    // 系统默认的UncaughtException处理类
-    private UncaughtExceptionHandler mDefaultHandler;
-    // CrashHandler实例
-    private static CrashHandler instance;
-    // 用来存储设备信息和异常信息
-    private Map<String, String> infos = new HashMap<String, String>();
 
-    /**
-     * 保证只有一个CrashHandler实例
-     */
     private CrashHandler() {
     }
 
     /**
-     * 获取CrashHandler实例 ,单例模式
+     * 单例模式，保证只有一个CustomCrashHandler实例存在
+     *
+     * @return
      */
     public static CrashHandler getInstance() {
-        if (instance == null)
-            instance = new CrashHandler();
-        return instance;
+        return mInstance;
     }
 
     /**
-     * 初始化
+     * 异常发生时，系统回调的函数，我们在这里处理一些操作
      */
-    public void init(Context context) {
-        // 获取系统默认的UncaughtException处理器
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        // 设置该CrashHandler为程序的默认处理器
+    @Override
+    public void uncaughtException(Thread thread, Throwable ex) {
+        //将一些信息保存到SDcard中
+        savaInfoToSD(mContext, ex);
+
+        //提示用户程序即将退出
+        showToast(mContext, "很抱歉，程序遭遇异常，即将退出！");
+        try {
+            thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+
+        //完美退出程序方法
+//        ExitAppUtils.getInstance().exit();
+
+    }
+
+
+    /**
+     * 为我们的应用程序设置自定义Crash处理
+     */
+    public void setCustomCrashHanler(Context context) {
+        mContext = context;
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
     /**
-     * 当UncaughtException发生时会转入该函数来处理
-     */
-    @Override
-    public void uncaughtException(Thread thread, Throwable ex) {
-        if (!handleException(ex) && mDefaultHandler != null) {
-            // 如果用户没有处理则让系统默认的异常处理器来处理
-            mDefaultHandler.uncaughtException(thread, ex);
-        } else {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-//                Log.e(Constants.TAG, "error : ", e);
-            }
-            // 退出程序
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
-        }
-    }
-
-    /**
-     * 自定义错误处理,收集错误信息 发送错误报告等操作均在此完成.
+     * 显示提示信息，需要在线程中显示Toast
      *
-     * @param ex
-     * @return true:如果处理了该异常信息;否则返回false.
+     * @param context
+     * @param msg
      */
-    private boolean handleException(Throwable ex) {
-        if (ex == null) {
-            return false;
-        }
+    private void showToast(final Context context, final String msg) {
+        new Thread(new Runnable() {
 
-        // 使用Toast来显示异常信息
-        new Thread() {
             @Override
             public void run() {
                 Looper.prepare();
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                 Looper.loop();
             }
-        }.start();
-        // 保存日志文件
+        }).start();
+    }
+
+
+    /**
+     * 获取一些简单的信息,软件版本，手机版本，型号等信息存放在HashMap中
+     *
+     * @param context
+     * @return
+     */
+    private HashMap<String, String> obtainSimpleInfo(Context context) {
+        HashMap<String, String> map = new HashMap<String, String>();
+        PackageManager mPackageManager = context.getPackageManager();
+        PackageInfo mPackageInfo = null;
         try {
-            saveCatchInfo2File(ex);
-        } catch (Exception e) {
+            mPackageInfo = mPackageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
+        } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
-        return true;
+
+        map.put("versionName", mPackageInfo.versionName);
+        map.put("versionCode", "" + mPackageInfo.versionCode);
+
+        map.put("MODEL", "" + Build.MODEL);
+        map.put("SDK_INT", "" + Build.VERSION.SDK_INT);
+        map.put("PRODUCT", "" + Build.PRODUCT);
+
+        return map;
+    }
+
+
+    /**
+     * 获取系统未捕捉的错误信息
+     *
+     * @param throwable
+     * @return
+     */
+    private String obtainExceptionInfo(Throwable throwable) {
+        StringWriter mStringWriter = new StringWriter();
+        PrintWriter mPrintWriter = new PrintWriter(mStringWriter);
+        throwable.printStackTrace(mPrintWriter);
+        mPrintWriter.close();
+
+        Log.e(TAG, mStringWriter.toString());
+        return mStringWriter.toString();
     }
 
     /**
-     * 保存错误信息到文件中
+     * 保存获取的 软件信息，设备信息和出错信息保存在SDcard中
      *
+     * @param context
      * @param ex
-     * @return 返回文件名称, 便于将文件传送到服务器
+     * @return
      */
-    private String saveCatchInfo2File(Throwable ex) {
-
+    private String savaInfoToSD(Context context, Throwable ex) {
+        String fileName = null;
         StringBuffer sb = new StringBuffer();
-        for (Map.Entry<String, String> entry : infos.entrySet()) {
+
+        for (Map.Entry<String, String> entry : obtainSimpleInfo(context).entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            sb.append(key + "=" + value + "\n");
+            sb.append(key).append(" = ").append(value).append("\n");
         }
 
-        Writer writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        ex.printStackTrace(printWriter);
-        Throwable cause = ex.getCause();
-        while (cause != null) {
-            cause.printStackTrace(printWriter);
-            cause = cause.getCause();
+        sb.append(obtainExceptionInfo(ex));
+
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File dir = new File(SDCARD_ROOT + File.separator + "crash" + File.separator);
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+
+            try {
+                fileName = dir.toString() + File.separator + paserTime(System.currentTimeMillis()) + ".log";
+                FileOutputStream fos = new FileOutputStream(fileName);
+                fos.write(sb.toString().getBytes());
+                fos.flush();
+                fos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
-        printWriter.close();
-        String result = writer.toString();
-        sb.append(result);
-        Loger.d("--" + sb.toString());
-        return null;
+
+        return fileName;
+
     }
 
+
+    /**
+     * 将毫秒数转换成yyyy-MM-dd-HH-mm-ss的格式
+     *
+     * @param milliseconds
+     * @return
+     */
+    private String paserTime(long milliseconds) {
+        System.setProperty("user.timezone", "Asia/Shanghai");
+        TimeZone tz = TimeZone.getTimeZone("Asia/Shanghai");
+        TimeZone.setDefault(tz);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        String times = format.format(new Date(milliseconds));
+
+        return times;
+    }
 }
