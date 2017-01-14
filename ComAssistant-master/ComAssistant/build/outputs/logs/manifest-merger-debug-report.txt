@@ -1,0 +1,145 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:2:1-61:12
+	package
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:3:5-35
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+	android:versionName
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:5:5-30
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+	android:versionCode
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:4:5-28
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:2:11-69
+uses-permission#android.permission.ACCESS_NETWORK_STATE
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:7:5-79
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:7:22-76
+uses-permission#android.permission.ACCESS_WIFI_STATE
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:8:5-76
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:8:22-73
+uses-permission#android.permission.INTERNET
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:9:5-67
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:9:22-64
+uses-permission#android.permission.READ_PHONE_STATE
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:10:5-75
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:10:22-72
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:12:5-81
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:12:22-78
+application
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:28:7-59:15
+MERGED from [com.android.support:appcompat-v7:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\appcompat-v7\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-v4:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-v4\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-media-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-utils:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-ui:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-fragment:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-media-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-ui:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-core-utils:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:support-vector-drawable:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.1\AndroidManifest.xml:23:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+MERGED from [com.android.support:animated-vector-drawable:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\24.2.1\AndroidManifest.xml:22:5-20
+MERGED from [com.android.support:support-vector-drawable:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.1\AndroidManifest.xml:23:5-20
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:25:5-20
+	android:label
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:31:5-37
+	android:supportsRtl
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:33:5-31
+	android:allowBackup
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:29:5-31
+	android:icon
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:30:5-32
+	android:theme
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:34:5-55
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:32:5-45
+meta-data#UMENG_APPKEY
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:36:5-38:52
+	android:value
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:38:9-49
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:37:9-36
+meta-data#UMENG_CHANNEL
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:39:5-41:38
+	android:value
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:41:9-35
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:40:9-37
+activity#com.bjw.ComAssistant.activity.MainActivity
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:43:5-51:16
+	android:screenOrientation
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:45:9-46
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:44:9-46
+intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:46:9-50:25
+action#android.intent.action.MAIN
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:47:13-65
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:47:21-62
+category#android.intent.category.LAUNCHER
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:49:13-73
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:49:23-70
+activity#com.bjw.ComAssistant.activity.LoginActivity
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:52:5-54:49
+	android:screenOrientation
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:54:9-46
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:53:9-47
+activity#com.bjw.ComAssistant.activity.DetailListActivity
+ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:56:5-58:49
+	android:screenOrientation
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:58:9-46
+	android:name
+		ADDED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml:57:9-52
+uses-sdk
+INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml reason: use-sdk injection requested
+MERGED from [com.android.support:appcompat-v7:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\appcompat-v7\24.2.1\AndroidManifest.xml:21:5-23:78
+MERGED from [com.android.support:support-v4:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-v4\24.2.1\AndroidManifest.xml:21:5-23:54
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-media-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-utils:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-ui:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-fragment:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-fragment\24.2.1\AndroidManifest.xml:21:5-23:60
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-media-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-media-compat\24.2.1\AndroidManifest.xml:21:5-23:63
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-ui:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-ui\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-core-utils:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-core-utils\24.2.1\AndroidManifest.xml:21:5-23:61
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:support-vector-drawable:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.1\AndroidManifest.xml:21:5-43
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+MERGED from [com.android.support:animated-vector-drawable:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\24.2.1\AndroidManifest.xml:20:5-44
+MERGED from [com.android.support:support-vector-drawable:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\24.2.1\AndroidManifest.xml:21:5-43
+MERGED from [com.android.support:support-compat:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\support-compat\24.2.1\AndroidManifest.xml:21:5-23:58
+	tools:overrideLibrary
+		ADDED from [com.android.support:appcompat-v7:24.2.1] C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\build\intermediates\exploded-aar\com.android.support\appcompat-v7\24.2.1\AndroidManifest.xml:23:9-75
+	android:targetSdkVersion
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml
+		INJECTED from C:\Users\JD\Desktop\ComAssistant-master\ComAssistant\src\main\AndroidManifest.xml

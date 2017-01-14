@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.bjw.ComAssistant"
+    android:versionCode="6"
+    android:versionName="1.6" >
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="24" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    ' 
+
+    <!-- <application -->
+    <!-- android:icon="@drawable/ic_launcher" -->
+    <!-- android:label="@string/app_name"> -->
+    <!-- <activity -->
+    <!-- android:name=".ComAssistantActivity" -->
+    <!-- android:configChanges="orientation|keyboard" -->
+    <!-- android:label="@string/app_name"> -->
+    <!-- <intent-filter> -->
+    <!-- <action android:name="android.intent.action.MAIN" /> -->
+    <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+    <!-- </intent-filter> -->
+    <!-- </activity> -->
+    <!-- </application> -->
+    <application
+        android:name="com.bjw.ComAssistant.application.EApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.NoActionBar" >
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="586b6ac007fe656b0f0001c4" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Channel ID" />
+
+        <activity
+            android:name="com.bjw.ComAssistant.activity.MainActivity"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.bjw.ComAssistant.activity.LoginActivity"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name="com.bjw.ComAssistant.activity.DetailListActivity"
+            android:screenOrientation="landscape" />
+    </application>
+
+</manifest>
