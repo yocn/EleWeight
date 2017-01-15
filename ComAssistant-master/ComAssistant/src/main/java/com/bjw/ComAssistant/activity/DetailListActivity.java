@@ -14,11 +14,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.bjw.ComAssistant.R;
 import com.bjw.ComAssistant.application.EApplication;
 import com.bjw.ComAssistant.bean.product.ProductBean;
@@ -29,9 +24,15 @@ import com.bjw.ComAssistant.presenter.WeightPresenter;
 import com.bjw.ComAssistant.util.Loger;
 import com.bjw.ComAssistant.util.RequestCallback;
 import com.bjw.ComAssistant.util.SharedPreferencesUtil;
+import com.bjw.ComAssistant.util.Utils;
 import com.bjw.ComAssistant.view.DetailAdapter;
 import com.bjw.ComAssistant.view.DoubleDatePickerDialog;
 import com.bjw.ComAssistant.view.listview.XListView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DetailListActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener, WeightPresenter.CastWeightInterface {
     DetailAdapter mDetailAdapter;
@@ -68,6 +69,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     GetListPresenter mGetListPresenter;
     ProductListBean mProductListBean = null;
     ArrayList<ProductBean> mProductBeanList = new ArrayList<>();
+    String tempWeight = "0.0";
+    DispQueueThread mDispThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +109,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
     protected void initData() {
         mContext = this;
+        mDispThread = new DispQueueThread();
+        mDispThread.start();
         WeightPresenter.getInstance().registerCastWeightWatcher(this);
         mGetListPresenter = new GetListPresenter(mGetListCallback);
         mQuantityPresenter = new QuantityPresenter(mQuantityCallback);
@@ -131,7 +136,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         mGetListPresenter.getList(EApplication.user.getUid(), EApplication.user.getAccess_token());
     }
 
-
     private void showInput(int position) {
         isInputShow = true;
         ProductBean detailBean = mProductBeanList.get(position);
@@ -151,7 +155,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         rl_full_input.setVisibility(View.VISIBLE);
         ll_full_input.setVisibility(View.VISIBLE);
     }
-
 
     /**
      * 称重
@@ -287,14 +290,14 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                     break;
                 }
                 String result = et_input.getText().toString().trim();
-                if (checkIsNum(result)) {
-                    ProductBean product = mProductBeanList.get(mCurrentPosition);
-                    product.setQuantity_real(result + mCurrentUnit);
-                    mDetailAdapter.setData(mProductBeanList);
-                    mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
-                } else {
-                    Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
-                }
+//                if (checkIsNum(result)) {
+                ProductBean product = mProductBeanList.get(mCurrentPosition);
+                product.setQuantity_real(result + mCurrentUnit);
+                mDetailAdapter.setData(mProductBeanList);
+                mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
+//                } else {
+//                    Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
+//                }
                 rl_full_input.setVisibility(View.GONE);
                 ll_full_input.setVisibility(View.GONE);
                 et_input.setText("");
@@ -359,8 +362,36 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         WeightPresenter.getInstance().unRegisterCasrWeightWatcher(this);
     }
 
+    //----------------------------------------------------刷新显示线程
+    private class DispQueueThread extends Thread {
+
+        @Override
+        public void run() {
+            super.run();
+            while (!isInterrupted()) {
+                while (tempWeight != null && !"".equals(tempWeight)) {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+//                            tv_weight.setText(tempWeight);
+                            String s = Utils.exeData(tempWeight) + "";
+                            et_input.setText(s);
+                            et_input.setSelection(s.length());
+//                            Toast.makeText(DetailListActivity.this, "DetailListActivity---DispQueueThread---" + Utils.exeData(tempWeight), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    try {
+                        Thread.sleep(1000);//显示性能高的话，可以把此数值调小。
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     public void onWeightNumChanged(String weight) {
-
+        tempWeight = weight;
     }
 }

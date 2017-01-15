@@ -39,8 +39,6 @@ public class EApplication extends Application {
         context = EApplication.this;
         isLoginSuccess = SharedPreferencesUtil.getInstance(this).getBoolean(LoginString);
         user = SharedPreferencesUtil.getInstance(this).getUser();
-        Loger.d("-----------------------------------");
-        Toast.makeText(this, "sadsad", Toast.LENGTH_LONG).show();
         initUmengData();
         init();
     }

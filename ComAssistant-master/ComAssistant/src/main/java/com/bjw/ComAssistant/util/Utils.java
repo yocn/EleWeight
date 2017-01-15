@@ -17,6 +17,21 @@ public class Utils {
         return m.matches();
     }
 
+    public static float exeData(String source) {
+        String regex = "\\+\\d{9}";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(source);
+        while (matcher.find()) {
+            String s = matcher.group(0);
+            String temp = matcher.group(0).substring(1, s.length() - 1);
+            int i = Integer.parseInt(temp);
+            float f = (float) i / 100;
+            System.out.println(f);
+            return f;
+        }
+        return 0;
+    }
+
     public static String MD5(String sourceStr) {
         String result = "";
         try {
