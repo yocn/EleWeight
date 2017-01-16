@@ -7,11 +7,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.bjw.ComAssistant.R;
 import com.bjw.ComAssistant.bean.product.ProductBean;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Hui on 2016/11/12.
@@ -63,7 +63,11 @@ public class DetailAdapter extends BaseAdapter {
         holder.tv_num.setText(detailBean.getLine_num());
         holder.tv_name.setText(detailBean.getGoods_name());
         holder.tv_weight.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
-        holder.tv_real.setText(detailBean.getQuantity_real());
+        if (detailBean.getQuantity_real() != null && !"".equals(detailBean.getQuantity_real())) {
+            holder.tv_real.setText(detailBean.getQuantity_real() + detailBean.getQuantity_unit());
+        } else {
+            holder.tv_real.setText(detailBean.getQuantity_real());
+        }
         return convertView;
     }
 

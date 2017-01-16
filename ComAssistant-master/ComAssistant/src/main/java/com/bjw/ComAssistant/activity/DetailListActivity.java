@@ -203,7 +203,28 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         mProductBeanList = bean.getGoods_list();
         mDetailAdapter.setData(mProductBeanList);
         lv_content.stopRefresh(true);
-        tv_left.setText("剩余商品数量：" + bean.getGoods_count());
+        notifyListCount();
+    }
+
+    private void notifyListCount(){
+        tv_left.setText("剩余商品数量：" + getListCount(mProductBeanList));
+    }
+
+    /**
+     * 获取当前查漏的list的size
+     *
+     * @param mProductBeanList
+     * @return
+     */
+    public int getListCount(ArrayList<ProductBean> mProductBeanList) {
+        int n = 0;
+        for (int i = 0; i < mProductBeanList.size(); i++) {
+            String read = mProductBeanList.get(i).getQuantity_real();
+            if (read == null || "".equals(read)) {
+                n++;
+            }
+        }
+        return n;
     }
 
     /**
@@ -213,7 +234,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
      * @return true：是数字，false不是数字
      */
     private boolean checkIsNum(String s) {
-        Pattern p = Pattern.compile("[0-9]*");
+        Pattern p = Pattern.compile("-?[0-9]+.?[0-9]+");
         Matcher m = p.matcher(s);
         if (m.matches()) {
             return true;
@@ -270,9 +291,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ll_full_input.setVisibility(View.GONE);
                 ProductBean productBean = mProductBeanList.get(mCurrentPosition);
                 String read = productBean.getQuantity();
-                productBean.setQuantity_real(read + mCurrentUnit);
+                productBean.setQuantity_real(read);
                 mDetailAdapter.setData(mProductBeanList);
                 mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
+                notifyListCount();
                 break;
             case R.id.rl_full_input://点击不显示
                 rl_full_input.setVisibility(View.GONE);
@@ -290,17 +312,18 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                     break;
                 }
                 String result = et_input.getText().toString().trim();
-//                if (checkIsNum(result)) {
-                ProductBean product = mProductBeanList.get(mCurrentPosition);
-                product.setQuantity_real(result + mCurrentUnit);
-                mDetailAdapter.setData(mProductBeanList);
-                mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
-//                } else {
-//                    Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
-//                }
+                if (checkIsNum(result)) {
+                    ProductBean product = mProductBeanList.get(mCurrentPosition);
+                    product.setQuantity_real(result);
+                    mDetailAdapter.setData(mProductBeanList);
+                    mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
+                } else {
+                    Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
+                }
                 rl_full_input.setVisibility(View.GONE);
                 ll_full_input.setVisibility(View.GONE);
                 et_input.setText("");
+                notifyListCount();
                 break;
             case R.id.btn_check://查漏
                 checkNoWeight();
