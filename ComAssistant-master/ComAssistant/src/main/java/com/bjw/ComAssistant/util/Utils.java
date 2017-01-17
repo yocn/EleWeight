@@ -2,6 +2,7 @@ package com.bjw.ComAssistant.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class Utils {
         return m.matches();
     }
 
-    public static float exeData(String source) {
+    public static String exeData(String source) {
         String regex = "\\+\\d{9}";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(source);
@@ -25,11 +26,12 @@ public class Utils {
             String s = matcher.group(0);
             String temp = matcher.group(0).substring(1, s.length() - 1);
             int i = Integer.parseInt(temp);
-            float f = (float) i / 100;
-            System.out.println(f);
-            return f;
+            float f = (float) i / 10000;
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+            String p = decimalFormat.format(f);//format 返回的是字符串
+            return p;
         }
-        return 0;
+        return "0.00";
     }
 
     public static String MD5(String sourceStr) {

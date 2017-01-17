@@ -10,6 +10,7 @@ import com.bjw.ComAssistant.R;
 import com.bjw.ComAssistant.SerialHelper;
 import com.bjw.ComAssistant.application.EApplication;
 import com.bjw.ComAssistant.presenter.WeightPresenter;
+import com.bjw.ComAssistant.util.Contants;
 import com.bjw.ComAssistant.util.Loger;
 import com.bjw.ComAssistant.util.Utils;
 import com.bjw.bean.ComBean;
@@ -26,7 +27,8 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
     SerialPortFinder mSerialPortFinder;
     SerialControl ComC;
     DispQueueThread mDispQueue;//刷新显示线程
-    String tempWeight = "0.0";
+    String tempWeight = "0.00";
+    StringBuilder sbTemp = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,21 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
 
     }
 
+    private String mPreShow = "";
+    private StringBuilder testText = new StringBuilder();
+
+    private void showWeight(String show) {
+//        if (show != null && Contants.DEFAULT_WEIGHT.equals(show)) {
+//            mPreShow = show;
+//        }
+        if (testText.length() > 2000) {
+            testText = new StringBuilder();
+        }
+        tv_test.setText(testText.toString());
+        tv_weight.setText(show);
+        sbTemp = new StringBuilder();
+    }
+
     //----------------------------------------------------刷新显示线程
     private class DispQueueThread extends Thread {
 
@@ -84,15 +101,14 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         public void run() {
             super.run();
             while (!isInterrupted()) {
-                while (tempWeight != null && !"".equals(tempWeight)) {
+                while (sbTemp.length() > 20) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-                            tv_weight.setText(Utils.exeData(tempWeight) + "");
-//                            Toast.makeText(MainActivity.this, "MainActivity---DispQueueThread---" + Utils.exeData(tempWeight), Toast.LENGTH_LONG).show();
+                            showWeight(Utils.exeData(sbTemp.toString()));
                         }
                     });
                     try {
-                        Thread.sleep(1000);//显示性能高的话，可以把此数值调小。
+                        Thread.sleep(Contants.TIME_SHOW);//显示性能高的话，可以把此数值调小。
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -120,7 +136,9 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
             //最终效果差不多-_-，线程定时刷新稍好一些。
 //            DispQueue.AddQueue(ComRecData);//线程定时刷新显示(推荐)
             tempWeight = new String(ComRecData.bRec);
-            WeightPresenter.getInstance().castWeight(tempWeight);
+            sbTemp.append(tempWeight);
+            testText.append(tempWeight + "-----------------");
+            WeightPresenter.getInstance().castWeight(sbTemp.toString());
             //直接刷新显示
         }
     }

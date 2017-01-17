@@ -21,6 +21,7 @@ import com.bjw.ComAssistant.bean.product.ProductListBean;
 import com.bjw.ComAssistant.presenter.GetListPresenter;
 import com.bjw.ComAssistant.presenter.QuantityPresenter;
 import com.bjw.ComAssistant.presenter.WeightPresenter;
+import com.bjw.ComAssistant.util.Contants;
 import com.bjw.ComAssistant.util.Loger;
 import com.bjw.ComAssistant.util.RequestCallback;
 import com.bjw.ComAssistant.util.SharedPreferencesUtil;
@@ -403,7 +404,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                         }
                     });
                     try {
-                        Thread.sleep(1000);//显示性能高的话，可以把此数值调小。
+                        Thread.sleep(Contants.TIME_SHOW);//显示性能高的话，可以把此数值调小。
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
