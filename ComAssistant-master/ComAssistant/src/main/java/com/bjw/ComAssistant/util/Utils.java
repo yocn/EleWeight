@@ -1,5 +1,10 @@
 package com.bjw.ComAssistant.util;
 
+import android.os.Environment;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -19,19 +24,19 @@ public class Utils {
     }
 
     public static String exeData(String source) {
-        String regex = "\\+\\d{9}";
+        String regex = "\\+\\d{8}";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             String s = matcher.group(0);
             String temp = matcher.group(0).substring(1, s.length() - 1);
             int i = Integer.parseInt(temp);
-            float f = (float) i / 10000;
-            DecimalFormat decimalFormat = new DecimalFormat("0.00");//构造方法的字符格式这里如果小数不足2位,会以0补足.
+            float f = (float) i / 1000;
+            DecimalFormat decimalFormat = new DecimalFormat("0.0");//构造方法的字符格式这里如果小数不足2位,会以0补足.
             String p = decimalFormat.format(f);//format 返回的是字符串
             return p;
         }
-        return "0.00";
+        return "0.0";
     }
 
     public static String MD5(String sourceStr) {
@@ -58,4 +63,35 @@ public class Utils {
         }
         return result;
     }
+
+
+    public static void writeFileToSD(String exception) {
+        String sdStatus = Environment.getExternalStorageState();
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String room = "";
+        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) {
+            return;
+        }
+        try {
+            String fileName = "/exception_1" + ".txt";
+            File path = new File(filePath);
+            File file = new File(filePath + fileName);
+            if (!path.exists()) {
+                Log.d("TestFile", "Create the path:" + filePath);
+                path.mkdir();
+            }
+            if (!file.exists()) {
+                Log.d("TestFile", "Create the file:" + fileName);
+                file.createNewFile();
+            }
+            FileOutputStream stream = new FileOutputStream(file);
+            byte[] buf = exception.getBytes();
+            stream.write(buf);
+            stream.close();
+        } catch (Exception e) {
+            Log.e("TestFile", "Error on writeFilToSD.");
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -89,6 +89,12 @@ public abstract class SerialHelper {
     }
 
     //----------------------------------------------------
+    public void sendTxt(byte[] bOutArray) {
+//        byte[] bOutArray = sTxt.getBytes();
+        send(bOutArray);
+    }
+
+    //----------------------------------------------------
     private class ReadThread extends Thread {
         @Override
         public void run() {

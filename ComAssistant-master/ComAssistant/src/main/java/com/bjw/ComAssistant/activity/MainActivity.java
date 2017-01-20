@@ -3,9 +3,11 @@ package com.bjw.ComAssistant.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bjw.ComAssistant.MyFunc;
 import com.bjw.ComAssistant.R;
 import com.bjw.ComAssistant.SerialHelper;
 import com.bjw.ComAssistant.application.EApplication;
@@ -27,8 +29,10 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
     SerialPortFinder mSerialPortFinder;
     SerialControl ComC;
     DispQueueThread mDispQueue;//刷新显示线程
-    String tempWeight = "0.00";
+    String tempWeight = "0.0";
     StringBuilder sbTemp = new StringBuilder();
+    Button bt_clear;
+    StringBuilder mTotalSB = new StringBuilder();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,15 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         tv_weight = (TextView) findViewById(R.id.tv_weight);
         tv_test = (TextView) findViewById(R.id.tv_test);
         login = (TextView) findViewById(R.id.login);
+
+        bt_clear = (Button) findViewById(R.id.bt_clear);
+        bt_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendPortData(ComC, mToZeros);
+                Toast.makeText(MainActivity.this, "发送成功---", Toast.LENGTH_LONG).show();
+            }
+        });
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,12 +80,18 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         });
     }
 
+    private byte[] mToZeros = new byte[6];
+
     protected void initData() {
+        for (int i = 0; i < Contants.toZero.length; i++) {
+            mToZeros[i] = MyFunc.HexToByte(Contants.toZero[i] + "");
+            System.out.println(mToZeros[i]);
+        }
+
         mDispQueue = new DispQueueThread();
         mDispQueue.start();
         WeightPresenter.getInstance().registerCastWeightWatcher(this);
     }
-
 
     @Override
     public void onWeightNumChanged(String weight) {
@@ -83,9 +102,6 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
     private StringBuilder testText = new StringBuilder();
 
     private void showWeight(String show) {
-//        if (show != null && Contants.DEFAULT_WEIGHT.equals(show)) {
-//            mPreShow = show;
-//        }
         if (testText.length() > 2000) {
             testText = new StringBuilder();
         }
@@ -101,9 +117,11 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         public void run() {
             super.run();
             while (!isInterrupted()) {
-                while (sbTemp.length() > 20) {
+                while (sbTemp.length() > 30) {
                     runOnUiThread(new Runnable() {
                         public void run() {
+                            String exe = Utils.exeData(sbTemp.toString());
+                            mTotalSB.append(sbTemp.toString()).append("--").append(exe).append("********\n");
                             showWeight(Utils.exeData(sbTemp.toString()));
                         }
                     });
@@ -127,7 +145,6 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         public SerialControl() {
         }
 
-
         @Override
         protected void onDataReceived(final ComBean ComRecData) {
             //数据接收量大或接收时弹出软键盘，界面会卡顿,可能和6410的显示性能有关
@@ -143,9 +160,8 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         }
     }
 
-
     //----------------------------------------------------串口发送
-    private void sendPortData(SerialHelper ComPort, String sOut) {
+    private void sendPortData(SerialHelper ComPort, byte[] sOut) {
         if (ComPort != null && ComPort.isOpen()) {
             ComPort.sendTxt(sOut);
         }
@@ -181,6 +197,7 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
 //        saveAssistData(AssistData);
         CloseComPort(ComC);
         WeightPresenter.getInstance().unRegisterCasrWeightWatcher(this);
+        Utils.writeFileToSD(mTotalSB.toString());
         super.onDestroy();
     }
 
