@@ -10,7 +10,6 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -30,7 +29,8 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="50dp"
                 android:text="0.0"
-                android:textSize="250sp" />
+                android:textSize="250sp"
+                android:visibility="gone" />
 
         </RelativeLayout>
 

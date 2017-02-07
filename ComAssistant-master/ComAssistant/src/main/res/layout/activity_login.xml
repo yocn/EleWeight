@@ -121,10 +121,17 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <CheckBox
-                android:id="@+id/checkBox"
+            <ImageView
+                android:id="@+id/iv_check"
+                android:layout_width="@dimen/height_check"
+                android:layout_height="@dimen/height_check"
+                android:src="@drawable/check_un" />
+
+            <TextView
+                android:id="@+id/tv_check"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_et"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:text="记住密码"
                 android:textSize="20sp"
                 android:textStyle="bold" />

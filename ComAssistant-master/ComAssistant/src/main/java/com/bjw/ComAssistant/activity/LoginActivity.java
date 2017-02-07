@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,17 +21,19 @@ import com.bjw.ComAssistant.util.SharedPreferencesUtil;
 import com.bjw.ComAssistant.util.Utils;
 import com.bjw.ComAssistant.view.ProgressDialog;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     ImageView iv_close;
+    ImageView iv_check;
     EditText et_login;
     EditText et_psd;
-    CheckBox checkBox;
+    //    CheckBox checkBox;
     Button btn_login;
     Activity mContext;
     private boolean isRemeberPass = false;
     LoginPresenter mLoginPresenter;
     ProgressDialog mProgressDialog;
     TextView tv_wrong_password;
+    TextView tv_check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +46,11 @@ public class LoginActivity extends BaseActivity {
 
     protected void initView() {
         tv_wrong_password = (TextView) findViewById(R.id.tv_wrong_password);
+        tv_check = (TextView) findViewById(R.id.tv_check);
         iv_close = (ImageView) findViewById(R.id.iv_close);
+        iv_check = (ImageView) findViewById(R.id.iv_check);
         et_login = (EditText) findViewById(R.id.et_login);
         et_psd = (EditText) findViewById(R.id.et_psd);
-        checkBox = (CheckBox) findViewById(R.id.checkBox);
         btn_login = (Button) findViewById(R.id.btn_login);
         tv_wrong_password.setVisibility(View.GONE);
     }
@@ -63,29 +64,9 @@ public class LoginActivity extends BaseActivity {
                 LoginActivity.this.finish();
             }
         });
-        btn_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String userName = et_login.getText().toString();
-                String userPassword = et_psd.getText().toString();
-                if ("".equals(userName.trim())) {
-                    MyToast.show(mContext, "请输入11位用户名");
-                    return;
-                }
-                if ("".equals(userPassword.trim())) {
-                    MyToast.show(mContext, "请输入密码");
-                    return;
-                }
-                login(userName, userPassword);
-
-            }
-        });
-        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isRemeberPass = isChecked;
-            }
-        });
+        btn_login.setOnClickListener(this);
+        iv_check.setOnClickListener(this);
+        tv_check.setOnClickListener(this);
     }
 
 
@@ -116,6 +97,8 @@ public class LoginActivity extends BaseActivity {
             });
             UserBean use = (UserBean) o;
             EApplication.user = use;
+//            Toast.makeText(LoginActivity.this, "isRemeberPass---" + isRemeberPass, Toast.LENGTH_SHORT).show();
+            Loger.d("\"isRemeberPass---\" + isRemeberPass---"+"isRemeberPass---" + isRemeberPass);
             if (isRemeberPass) {
                 /**如果勾选了记住密码，登录成功之后记住密码*/
                 EApplication.isLoginSuccess = true;
@@ -141,4 +124,40 @@ public class LoginActivity extends BaseActivity {
         }
     };
 
+    private void notifyCheck() {
+        if (isRemeberPass) {
+            /**选中状态*/
+            iv_check.setImageResource(R.drawable.check_un);
+            isRemeberPass = false;
+        } else {
+            iv_check.setImageResource(R.drawable.check);
+            isRemeberPass = true;
+        }
+        Loger.d("notifyCheck---"+"isRemeberPass---" + isRemeberPass);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_login:
+                String userName = et_login.getText().toString();
+                String userPassword = et_psd.getText().toString();
+                if ("".equals(userName.trim())) {
+                    MyToast.show(mContext, "请输入11位用户名");
+                    return;
+                }
+                if ("".equals(userPassword.trim())) {
+                    MyToast.show(mContext, "请输入密码");
+                    return;
+                }
+                login(userName, userPassword);
+                break;
+            case R.id.iv_check:
+            case R.id.tv_check:
+                notifyCheck();
+                break;
+            default:
+                break;
+        }
+    }
 }

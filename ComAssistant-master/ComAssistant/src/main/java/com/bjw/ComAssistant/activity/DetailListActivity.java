@@ -120,6 +120,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         lv_content.setPullLoadEnable(false);
         lv_content.setXListViewListener(this);
         mDetailAdapter.setData(mProductBeanList);
+        rl_full_input.setVisibility(View.GONE);
         lv_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -345,10 +346,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 finish();
                 break;
             case R.id.tv_date_picker_start://开始日期
-                showCalendarDialog();
+//                showCalendarDialog();
                 break;
             case R.id.tv_date_picker_end://结束日期
-                showCalendarDialog();
+//                showCalendarDialog();
                 break;
         }
     }
