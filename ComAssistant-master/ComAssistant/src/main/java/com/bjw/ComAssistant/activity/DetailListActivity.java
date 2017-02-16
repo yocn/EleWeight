@@ -38,6 +38,8 @@ import java.util.regex.Pattern;
 public class DetailListActivity extends BaseActivity implements View.OnClickListener, XListView.IXListViewListener, WeightPresenter.CastWeightInterface {
     DetailAdapter mDetailAdapter;
     TextView tv_address;//地址
+    TextView tv_remark;//商品留言
+    View view_divider;
     TextView tv_left;//剩余商品数量
     Button btn_check;//查漏
     ImageView iv_user;//用户信息
@@ -85,6 +87,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         iv_close = (ImageView) findViewById(R.id.iv_close);
         btn_logout = (Button) findViewById(R.id.btn_logout);
         tv_address = (TextView) findViewById(R.id.tv_address);
+        view_divider = findViewById(R.id.view_divider);
+        tv_remark = (TextView) findViewById(R.id.tv_remark);
         tv_left = (TextView) findViewById(R.id.tv_left);
         btn_check = (Button) findViewById(R.id.btn_check);
         iv_user = (ImageView) findViewById(R.id.iv_user);
@@ -126,6 +130,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mCurrentPosition = position - 1;
                 mCurrentUnit = mProductBeanList.get(mCurrentPosition).getQuantity_unit();
+//                setListViewPos(mCurrentPosition);
                 showInput(mCurrentPosition);
             }
         });
@@ -138,7 +143,17 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         mGetListPresenter.getList(EApplication.user.getUid(), EApplication.user.getAccess_token());
     }
 
+
     private void showInput(int position) {
+        if (position >= mProductBeanList.size()) {
+            isInputShow = false;
+            return;
+        }
+//        mDetailAdapter.setCheckPosition(position);
+        if (position >= 2) {
+            lv_content.setSelection(position - 2);
+            lv_content.smoothScrollToPosition(position - 2);
+        }
         isInputShow = true;
         ProductBean detailBean = mProductBeanList.get(position);
         tv_num_input.setText(detailBean.getLine_num());
@@ -149,6 +164,15 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             et_input.setText(detailBean.getQuantity_real());
         } else {
             et_input.setText("");
+        }
+        Loger.d("detailBean---" + detailBean.toString());
+        if (detailBean.getRemark() != null && !"".equals(detailBean.getRemark())) {
+            tv_remark.setVisibility(View.VISIBLE);
+            view_divider.setVisibility(View.VISIBLE);
+            tv_remark.setText(detailBean.getRemark());
+        } else {
+            tv_remark.setVisibility(View.GONE);
+            view_divider.setVisibility(View.GONE);
         }
 
         et_input.setFocusable(true);
@@ -208,7 +232,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         notifyListCount();
     }
 
-    private void notifyListCount(){
+    private void notifyListCount() {
         tv_left.setText("剩余商品数量：" + getListCount(mProductBeanList));
     }
 
@@ -288,16 +312,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_no://不称重
-                rl_full_input.setVisibility(View.GONE);
-                ll_full_input.setVisibility(View.GONE);
-                ProductBean productBean = mProductBeanList.get(mCurrentPosition);
-                String read = productBean.getQuantity();
-                productBean.setQuantity_real(read);
-                mDetailAdapter.setData(mProductBeanList);
-                mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
-                notifyListCount();
-                break;
             case R.id.rl_full_input://点击不显示
                 rl_full_input.setVisibility(View.GONE);
                 ll_full_input.setVisibility(View.GONE);
@@ -309,7 +323,30 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ll_full_input.setVisibility(View.VISIBLE);
                 isInputShow = true;
                 break;
+            case R.id.btn_no://不称重
+                rl_full_input.setVisibility(View.GONE);
+                ll_full_input.setVisibility(View.GONE);
+                if (mCurrentPosition >= mProductBeanList.size()) {
+                    isInputShow = false;
+                    return;
+                }
+                if (!isInputShow) {
+                    break;
+                }
+                ProductBean productBean = mProductBeanList.get(mCurrentPosition);
+                String read = productBean.getQuantity();
+                productBean.setQuantity_real(read);
+                mDetailAdapter.setData(mProductBeanList);
+                mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
+                notifyListCount();
+                mCurrentPosition++;
+                showInput(mCurrentPosition);
+                break;
             case R.id.btn_ok://确定
+                if (mCurrentPosition >= mProductBeanList.size()) {
+                    isInputShow = false;
+                    return;
+                }
                 if (!isInputShow) {
                     break;
                 }
@@ -326,6 +363,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ll_full_input.setVisibility(View.GONE);
                 et_input.setText("");
                 notifyListCount();
+                mCurrentPosition++;
+                showInput(mCurrentPosition);
                 break;
             case R.id.btn_check://查漏
                 checkNoWeight();

@@ -50,8 +50,8 @@ public class EApplication extends Application {
     }
 
     private void init() {
-        CrashHandler mCrashHandler = CrashHandler.getInstance();
-        mCrashHandler.getInstance().setCustomCrashHanler(this);
+//        CrashHandler mCrashHandler = CrashHandler.getInstance();
+//        mCrashHandler.getInstance().setCustomCrashHanler(this);
     }
 
 

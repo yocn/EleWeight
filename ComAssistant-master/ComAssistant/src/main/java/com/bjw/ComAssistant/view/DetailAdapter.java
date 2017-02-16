@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bjw.ComAssistant.R;
@@ -20,6 +21,7 @@ import java.util.List;
 public class DetailAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<ProductBean> mDetailBeanList = new ArrayList<>();
+    private int mCheckPosition = -1;
 
     public DetailAdapter(Context context) {
         this.mInflater = LayoutInflater.from(context);
@@ -27,6 +29,11 @@ public class DetailAdapter extends BaseAdapter {
 
     public void setData(List<ProductBean> mDetailBeanList) {
         this.mDetailBeanList = mDetailBeanList;
+        this.notifyDataSetChanged();
+    }
+
+    public void setCheckPosition(int position) {
+        mCheckPosition = position;
         this.notifyDataSetChanged();
     }
 
@@ -56,9 +63,15 @@ public class DetailAdapter extends BaseAdapter {
             holder.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             holder.tv_weight = (TextView) convertView.findViewById(R.id.tv_weight);
             holder.tv_real = (TextView) convertView.findViewById(R.id.tv_real);
+            holder.ll_all = (LinearLayout) convertView.findViewById(R.id.ll_all);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
+        }
+        if (position == mCheckPosition) {
+            holder.ll_all.setBackgroundResource(R.color.gray_et_787878);
+        } else {
+            holder.ll_all.setBackgroundResource(R.color.white);
         }
         holder.tv_num.setText(detailBean.getLine_num());
         holder.tv_name.setText(detailBean.getGoods_name());
@@ -72,6 +85,7 @@ public class DetailAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
+        private LinearLayout ll_all;
         private TextView tv_num;
         private TextView tv_name;
         private TextView tv_weight;

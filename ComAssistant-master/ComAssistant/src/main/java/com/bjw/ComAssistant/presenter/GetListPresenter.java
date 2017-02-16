@@ -81,8 +81,9 @@ public class GetListPresenter extends BasePresenter {
                                 String quantity_unit = detailObject.getString("quantity_unit");
                                 String quantity_real = detailObject.getString("quantity_real");
                                 String quantity_real_unit = detailObject.getString("quantity_real_unit");
+                                String remark = detailObject.getString("remark");
                                 ProductBean mProductBean = new ProductBean(line_num, goods_id, goods_name, customer_id,
-                                        customer_store_name, unit_id, quantity, quantity_unit, quantity_real, quantity_real_unit);
+                                        customer_store_name, unit_id, quantity, quantity_unit, quantity_real, quantity_real_unit, remark);
                                 goods_list.add(mProductBean);
                             }
                             ProductListBean mProductListBean = new ProductListBean(order_id, start_date, end_date, goods_count, goods_list);

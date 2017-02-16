@@ -12,50 +12,52 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--<application-->
-        <!--android:icon="@drawable/ic_launcher"-->
-        <!--android:label="@string/app_name">-->
-        <!--<activity-->
-            <!--android:name=".ComAssistantActivity"-->
-            <!--android:configChanges="orientation|keyboard"-->
-            <!--android:label="@string/app_name">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
+    <!--android:icon="@drawable/ic_launcher"-->
+    <!--android:label="@string/app_name">-->
+    <!--<activity-->
+    <!--android:name=".ComAssistantActivity"-->
+    <!--android:configChanges="orientation|keyboard"-->
+    <!--android:label="@string/app_name">-->
+    <!--<intent-filter>-->
+    <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
+    <!--<category android:name="android.intent.category.LAUNCHER" />-->
+    <!--</intent-filter>-->
+    <!--</activity>-->
     <!--</application>-->
-    ' <application
-    android:allowBackup="true"
-    android:icon="@mipmap/icon"
-    android:label="@string/app_name"
-    android:name=".application.EApplication"
-    android:supportsRtl="true"
-    android:theme="@style/Theme.AppCompat.NoActionBar">
+    '
+    <application
+        android:name=".application.EApplication"
+        android:allowBackup="true"
+        android:hardwareAccelerated="false"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.NoActionBar">
 
-    <meta-data
-        android:name="UMENG_APPKEY"
-        android:value="586b6ac007fe656b0f0001c4" />
-    <meta-data
-        android:name="UMENG_CHANNEL"
-        android:value="Channel ID" />
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="586b6ac007fe656b0f0001c4" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="Channel ID" />
 
-    <activity
-        android:name=".activity.MainActivity"
-        android:screenOrientation="landscape">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="landscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-    <activity
-        android:name=".activity.LoginActivity"
-        android:screenOrientation="landscape" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="landscape" />
 
-    <activity
-        android:name=".activity.DetailListActivity"
-        android:screenOrientation="landscape" />
-</application>
+        <activity
+            android:name=".activity.DetailListActivity"
+            android:screenOrientation="landscape" />
+    </application>
 
 </manifest>

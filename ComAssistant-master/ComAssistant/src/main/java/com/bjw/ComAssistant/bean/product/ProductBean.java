@@ -15,13 +15,13 @@ public class ProductBean {
     private String quantity_unit;//商品下单量单位
     private String quantity_real;//商品分拣实际重量
     private String quantity_real_unit;//商品分拣实际重量单位
+    private String remark;//留言
 
     public ProductBean() {
     }
 
     public ProductBean(String line_num, String goods_id, String goods_name, String customer_id,
-                       String customer_store_name, String unit_id, String quantity,
-                       String quantity_unit, String quantity_real, String quantity_real_unit) {
+                       String customer_store_name, String unit_id, String quantity, String quantity_unit, String quantity_real, String quantity_real_unit, String remark) {
         this.line_num = line_num;
         this.goods_id = goods_id;
         this.goods_name = goods_name;
@@ -32,6 +32,15 @@ public class ProductBean {
         this.quantity_unit = quantity_unit;
         this.quantity_real = quantity_real;
         this.quantity_real_unit = quantity_real_unit;
+        this.remark = remark;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getLine_num() {
@@ -127,6 +136,7 @@ public class ProductBean {
                 ", quantity_unit='" + quantity_unit + '\'' +
                 ", quantity_real='" + quantity_real + '\'' +
                 ", quantity_real_unit='" + quantity_real_unit + '\'' +
+                ", remark='" + remark + '\'' +
                 '}' + "\n";
     }
 }

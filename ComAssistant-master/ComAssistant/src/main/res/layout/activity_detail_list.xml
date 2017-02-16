@@ -104,8 +104,8 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
-                    android:scaleType="fitXY"
                     android:layout_alignParentBottom="true"
+                    android:scaleType="fitXY"
                     android:src="@drawable/list_up" />
             </RelativeLayout>
         </FrameLayout>
@@ -209,77 +209,99 @@
         <LinearLayout
             android:id="@+id/ll_full_input"
             android:layout_width="fill_parent"
-            android:layout_height="150dp"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="-10dp"
             android:layout_marginRight="-10dp"
             android:background="@drawable/reg_background"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_num_input"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:gravity="center_horizontal"
-                android:text="06"
-                android:textColor="@color/red"
-                android:textSize="@dimen/size_lv"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="150dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_num_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center_horizontal"
+                    android:text="06"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/size_lv"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/trans" />
+
+                <TextView
+                    android:id="@+id/tv_name_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="13"
+                    android:gravity="center_horizontal"
+                    android:text="大白菜"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/size_input"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/trans" />
+
+                <TextView
+                    android:id="@+id/tv_weight_input"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center_horizontal"
+                    android:text="50斤"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/size_input"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/trans" />
+
+                <EditText
+                    android:id="@+id/et_input"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_weight="4"
+                    android:background="@drawable/bg_et_detail_input"
+                    android:singleLine="true"
+                    android:textColor="@color/red"
+                    android:textCursorDrawable="@drawable/cursor"
+                    android:textSize="@dimen/size_input"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/trans" />
+                android:id="@+id/view_divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/bg_dash"
+                android:layerType="software" />
 
             <TextView
-                android:id="@+id/tv_name_input"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="13"
-                android:gravity="center_horizontal"
-                android:text="大白菜"
-                android:textColor="@color/red"
-                android:textSize="@dimen/size_input"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/trans" />
-
-            <TextView
-                android:id="@+id/tv_weight_input"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:gravity="center_horizontal"
-                android:text="50斤"
-                android:textColor="@color/red"
-                android:textSize="@dimen/size_input"
-                android:textStyle="bold" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/trans" />
-
-            <EditText
-                android:id="@+id/et_input"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="25dp"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="50dp"
-                android:layout_marginTop="25dp"
-                android:layout_weight="4"
-                android:background="@drawable/bg_et_detail_input"
-                android:singleLine="true"
-                android:textColor="@color/red"
-                android:textCursorDrawable="@drawable/cursor"
-                android:textSize="@dimen/size_input"
+                android:id="@+id/tv_remark"
+                android:layout_width="match_parent"
+                android:layout_height="69dp"
+                android:gravity="center"
+                android:textColor="@color/green"
+                android:textSize="40sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -287,13 +309,12 @@
         <RelativeLayout
             android:id="@+id/ll_full_info"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="300dp"
             android:layout_marginLeft="200dp"
             android:layout_marginRight="200dp"
             android:layout_marginTop="130dp"
             android:background="@drawable/reg_background"
             android:visibility="gone">
-
 
             <ImageView
                 android:id="@+id/iv_close"
@@ -310,7 +331,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="90dp"
                 android:text="登录信息：李丽丽 (21221213242)"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
