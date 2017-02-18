@@ -46,7 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:text="剩余商品数量：162"
+                    android:text="剩余商品数量：0"
                     android:textColor="@color/white"
                     android:textSize="30sp" />
 
@@ -109,7 +109,6 @@
                     android:src="@drawable/list_up" />
             </RelativeLayout>
         </FrameLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -215,7 +214,7 @@
             android:layout_marginRight="-10dp"
             android:background="@drawable/reg_background"
             android:orientation="vertical"
-            android:visibility="gone">
+            >
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -229,9 +228,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
                     android:gravity="center_horizontal"
-                    android:text="06"
+                    android:text="906"
                     android:textColor="@color/red"
-                    android:textSize="@dimen/size_lv"
+                    android:textSize="@dimen/size_input"
                     android:textStyle="bold" />
 
                 <View
@@ -243,9 +242,10 @@
                     android:id="@+id/tv_name_input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="13"
+                    android:layout_weight="16"
                     android:gravity="center_horizontal"
-                    android:text="大白菜"
+                    android:maxLines="3"
+                    android:text="大白菜清理干净（带皮卫生可以折行的的萨达的第三代是打算的撒的萨达的萨达萨达）"
                     android:textColor="@color/red"
                     android:textSize="@dimen/size_input"
                     android:textStyle="bold" />
@@ -259,9 +259,10 @@
                     android:id="@+id/tv_weight_input"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
+                    android:layout_weight="8"
                     android:gravity="center_horizontal"
-                    android:text="50斤"
+                    android:text="1000.0公斤"
+                    android:singleLine="true"
                     android:textColor="@color/red"
                     android:textSize="@dimen/size_input"
                     android:textStyle="bold" />
@@ -276,14 +277,16 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="25dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_marginRight="50dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_marginTop="25dp"
-                    android:layout_weight="4"
+                    android:layout_weight="6"
+                    android:inputType="numberDecimal"
                     android:background="@drawable/bg_et_detail_input"
                     android:singleLine="true"
                     android:textColor="@color/red"
-                    android:textCursorDrawable="@drawable/cursor"
+                    android:text="1000.0斤"
+                    android:textCursorDrawable="@drawable/divider"
                     android:textSize="@dimen/size_input"
                     android:textStyle="bold" />
             </LinearLayout>

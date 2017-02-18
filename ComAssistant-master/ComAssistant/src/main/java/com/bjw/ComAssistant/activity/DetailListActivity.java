@@ -74,6 +74,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     ArrayList<ProductBean> mProductBeanList = new ArrayList<>();
     String tempWeight = "0.0";
     DispQueueThread mDispThread;
+    private boolean isCheckNoWeightOption = false;//是否是点击查漏的操作，如果是点击的查漏，称重后跳到下一个没有重量的item，否则跳到下一个
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +129,9 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         lv_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                isCheckNoWeightOption = false;
                 mCurrentPosition = position - 1;
+                mUnCheckPosition = mCurrentPosition;
                 mCurrentUnit = mProductBeanList.get(mCurrentPosition).getQuantity_unit();
 //                setListViewPos(mCurrentPosition);
                 showInput(mCurrentPosition);
@@ -150,9 +153,9 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             return;
         }
 //        mDetailAdapter.setCheckPosition(position);
-        if (position >= 2) {
-            lv_content.setSelection(position - 2);
-            lv_content.smoothScrollToPosition(position - 2);
+        if (position > 2) {
+            lv_content.setSelection(position - 1);
+            lv_content.smoothScrollToPosition(position - 1);
         }
         isInputShow = true;
         ProductBean detailBean = mProductBeanList.get(position);
@@ -163,7 +166,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             /**数量不为空的情况下*/
             et_input.setText(detailBean.getQuantity_real());
         } else {
-            et_input.setText("");
+            et_input.setText("0.0");
         }
         Loger.d("detailBean---" + detailBean.toString());
         if (detailBean.getRemark() != null && !"".equals(detailBean.getRemark())) {
@@ -175,6 +178,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             view_divider.setVisibility(View.GONE);
         }
 
+        et_input.setSelection(et_input.getText().toString().length());
         et_input.setFocusable(true);
         et_input.setFocusableInTouchMode(true);
         et_input.requestFocus();
@@ -289,8 +293,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
      */
     private void checkNoWeight() {
         boolean hasNoWeight = false;
+        isCheckNoWeightOption = true;
+        Loger.d("mUnCheckPosition--------" + mUnCheckPosition);
         label:
-        for (int i = 0; i < mProductBeanList.size(); i++) {
+        for (int i = mUnCheckPosition + 1; i < mProductBeanList.size(); i++) {
             String real = mProductBeanList.get(i).getQuantity_real();
             if ("".equals(real)) {
                 /**读数是空的*/
@@ -305,6 +311,8 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             lv_content.smoothScrollToPosition(mUnCheckPosition);
             showInput(mUnCheckPosition);
         } else {
+            mUnCheckPosition = 0;
+            isInputShow = false;
             Toast.makeText(DetailListActivity.this, "没有遗漏的条目", Toast.LENGTH_SHORT).show();
         }
     }
@@ -321,6 +329,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             case R.id.ll_full_input://称重的界面
                 rl_full_input.setVisibility(View.VISIBLE);
                 ll_full_input.setVisibility(View.VISIBLE);
+//                et_input.requestFocus();
                 isInputShow = true;
                 break;
             case R.id.btn_no://不称重
@@ -339,8 +348,14 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 mDetailAdapter.setData(mProductBeanList);
                 mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
                 notifyListCount();
-                mCurrentPosition++;
-                showInput(mCurrentPosition);
+//                if (isCheckNoWeightOption) {
+//                    /**如果是查漏操作，跳到下一个查漏*/
+                checkNoWeight();
+//                } else {
+//                    /**如果不是是查漏操作，跳到下一个*/
+//                    mCurrentPosition++;
+//                    showInput(mCurrentPosition);
+//                }
                 break;
             case R.id.btn_ok://确定
                 if (mCurrentPosition >= mProductBeanList.size()) {
@@ -352,10 +367,15 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 }
                 String result = et_input.getText().toString().trim();
                 if (checkIsNum(result)) {
-                    ProductBean product = mProductBeanList.get(mCurrentPosition);
-                    product.setQuantity_real(result);
-                    mDetailAdapter.setData(mProductBeanList);
-                    mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
+                    float f = Float.parseFloat(result);
+                    if (f < 0.01) {
+                        /**认为是0,Do Nothing*/
+                    } else {
+                        ProductBean product = mProductBeanList.get(mCurrentPosition);
+                        product.setQuantity_real(result);
+                        mDetailAdapter.setData(mProductBeanList);
+                        mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
+                    }
                 } else {
                     Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
                 }
@@ -363,10 +383,18 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ll_full_input.setVisibility(View.GONE);
                 et_input.setText("");
                 notifyListCount();
-                mCurrentPosition++;
-                showInput(mCurrentPosition);
+//                if (isCheckNoWeightOption) {
+//                    /**如果是查漏操作，跳到下一个查漏*/
+                checkNoWeight();
+//                } else {
+//                    /**如果不是是查漏操作，跳到下一个*/
+//                    mCurrentPosition++;
+//                    showInput(mCurrentPosition);
+//                }
+
                 break;
             case R.id.btn_check://查漏
+                mUnCheckPosition = 0;
                 checkNoWeight();
                 break;
             case R.id.iv_user://用户
@@ -438,8 +466,13 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                         public void run() {
 //                            tv_weight.setText(tempWeight);
                             String s = Utils.exeData(tempWeight) + "";
-                            et_input.setText(s);
-                            et_input.setSelection(s.length());
+                            float f = Float.parseFloat(s);
+                            if (f < 0.01) {
+                                /**认为是0,Do Nothing*/
+                            } else {
+                                et_input.setText(s);
+                                et_input.setSelection(s.length());
+                            }
 //                            Toast.makeText(DetailListActivity.this, "DetailListActivity---DispQueueThread---" + Utils.exeData(tempWeight), Toast.LENGTH_LONG).show();
                         }
                     });

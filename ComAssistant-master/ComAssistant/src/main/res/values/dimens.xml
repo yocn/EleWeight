@@ -11,6 +11,6 @@
     <dimen name="height_login_icon">40dp</dimen>
     <dimen name="padding_login">200dp</dimen>
 
-    <dimen name="size_lv">30sp</dimen>
-    <dimen name="size_input">45sp</dimen>
+    <dimen name="size_lv">45sp</dimen>
+    <dimen name="size_input">40sp</dimen>
 </resources>
