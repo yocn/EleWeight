@@ -26,7 +26,7 @@ import com.bjw.ComAssistant.util.SharedPreferencesUtil;
  */
 
 public class EApplication extends Application {
-    public static String tag = "woxain";
+    public static String tag = "woxian";
     public static boolean isShowLog = true;
     public static boolean isLoginSuccess = false;//是否记住密码
     public static UserBean user = null;

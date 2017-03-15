@@ -214,7 +214,7 @@
             android:layout_marginRight="-10dp"
             android:background="@drawable/reg_background"
             android:orientation="vertical"
-            >
+            android:visibility="gone">
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -261,8 +261,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="8"
                     android:gravity="center_horizontal"
-                    android:text="1000.0公斤"
                     android:singleLine="true"
+                    android:text="1000.0公斤"
                     android:textColor="@color/red"
                     android:textSize="@dimen/size_input"
                     android:textStyle="bold" />
@@ -281,11 +281,11 @@
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="25dp"
                     android:layout_weight="6"
-                    android:inputType="numberDecimal"
                     android:background="@drawable/bg_et_detail_input"
+                    android:inputType="numberDecimal"
                     android:singleLine="true"
-                    android:textColor="@color/red"
                     android:text="1000.0斤"
+                    android:textColor="@color/red"
                     android:textCursorDrawable="@drawable/divider"
                     android:textSize="@dimen/size_input"
                     android:textStyle="bold" />
@@ -352,5 +352,13 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_test"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="@color/red"
+        android:textSize="20sp"
+        android:visibility="gone" />
 
 </FrameLayout>

@@ -11,5 +11,6 @@ public class Contants {
     public static String LOGIN = "ses/user/login";
     public static String GET_LIST = "ses/order_partition/get_goods_list";
     public static String CHECK = "ses/order_partition/goods_quantity_real_config";
-    public static int[] toZero = { 0x02, 0x41, 0x5A, 0x31, 0x42, 0x03 };
+    public static int[] toZero = {0x02, 0x41, 0x5A, 0x31, 0x42, 0x03};
+    public static byte[] zeroBytes = {(byte) 0x02, (byte) 0x41, (byte) 0x5A, (byte) 0x31, (byte) 0x42, (byte) 0x03};
 }

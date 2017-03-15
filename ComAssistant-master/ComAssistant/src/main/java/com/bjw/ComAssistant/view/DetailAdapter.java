@@ -77,7 +77,7 @@ public class DetailAdapter extends BaseAdapter {
         holder.tv_name.setText(detailBean.getGoods_name());
         holder.tv_weight.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
         if (detailBean.getQuantity_real() != null && !"".equals(detailBean.getQuantity_real())) {
-            holder.tv_real.setText(detailBean.getQuantity_real() + detailBean.getQuantity_unit());
+            holder.tv_real.setText(detailBean.getQuantity_real() + detailBean.getQuantity_real_unit());
         } else {
             holder.tv_real.setText(detailBean.getQuantity_real());
         }

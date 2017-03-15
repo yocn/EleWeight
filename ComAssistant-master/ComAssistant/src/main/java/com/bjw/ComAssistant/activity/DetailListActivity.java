@@ -2,6 +2,9 @@ package com.bjw.ComAssistant.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -66,6 +69,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     private String mCurrentUnit = "";
     private String mCurrentOrderId = "";
     private int mUnCheckPosition = 0;//查漏的时候要用到的未称重的item
+    private int mOldUnCheckPosition = 0;//查漏的时候要用到的上一个未称重的item，用来检测是不是到了最后一个漏掉的item
     boolean isInputShow = false;//输入框是否*在显示
     Activity mContext;
     QuantityPresenter mQuantityPresenter;
@@ -84,7 +88,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         initData();
     }
 
+    TextView tv_test;
+
     protected void initView() {
+        tv_test = (TextView) findViewById(R.id.tv_test);
         iv_close = (ImageView) findViewById(R.id.iv_close);
         btn_logout = (Button) findViewById(R.id.btn_logout);
         tv_address = (TextView) findViewById(R.id.tv_address);
@@ -129,9 +136,11 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         lv_content.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPreHeight = 0;
                 isCheckNoWeightOption = false;
                 mCurrentPosition = position - 1;
                 mUnCheckPosition = mCurrentPosition;
+                mOldUnCheckPosition = 0;
                 mCurrentUnit = mProductBeanList.get(mCurrentPosition).getQuantity_unit();
 //                setListViewPos(mCurrentPosition);
                 showInput(mCurrentPosition);
@@ -146,45 +155,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         mGetListPresenter.getList(EApplication.user.getUid(), EApplication.user.getAccess_token());
     }
 
-
-    private void showInput(int position) {
-        if (position >= mProductBeanList.size()) {
-            isInputShow = false;
-            return;
-        }
-//        mDetailAdapter.setCheckPosition(position);
-        if (position > 2) {
-            lv_content.setSelection(position - 1);
-            lv_content.smoothScrollToPosition(position - 1);
-        }
-        isInputShow = true;
-        ProductBean detailBean = mProductBeanList.get(position);
-        tv_num_input.setText(detailBean.getLine_num());
-        tv_name_input.setText(detailBean.getGoods_name());
-        tv_weight_input.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
-        if (detailBean.getQuantity_real() != null && !"".equals(detailBean.getQuantity_real())) {
-            /**数量不为空的情况下*/
-            et_input.setText(detailBean.getQuantity_real());
-        } else {
-            et_input.setText("0.0");
-        }
-        Loger.d("detailBean---" + detailBean.toString());
-        if (detailBean.getRemark() != null && !"".equals(detailBean.getRemark())) {
-            tv_remark.setVisibility(View.VISIBLE);
-            view_divider.setVisibility(View.VISIBLE);
-            tv_remark.setText(detailBean.getRemark());
-        } else {
-            tv_remark.setVisibility(View.GONE);
-            view_divider.setVisibility(View.GONE);
-        }
-
-        et_input.setSelection(et_input.getText().toString().length());
-        et_input.setFocusable(true);
-        et_input.setFocusableInTouchMode(true);
-        et_input.requestFocus();
-        rl_full_input.setVisibility(View.VISIBLE);
-        ll_full_input.setVisibility(View.VISIBLE);
-    }
 
     /**
      * 称重
@@ -252,6 +222,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
             String read = mProductBeanList.get(i).getQuantity_real();
             if (read == null || "".equals(read)) {
                 n++;
+//                mOldUnCheckPosition = i;
             }
         }
         return n;
@@ -288,15 +259,24 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         btn_logout.setOnClickListener(this);
     }
 
+    boolean hasNoWeight = false;
+
     /**
      * 找没有还称重的item
+     *
+     * @param isCheck 是否是查漏操作
      */
-    private void checkNoWeight() {
-        boolean hasNoWeight = false;
+    private void checkNoWeight(boolean isCheck) {
+        hideInput();
+        mPreHeight = 0;
+        hasNoWeight = false;
         isCheckNoWeightOption = true;
-        Loger.d("mUnCheckPosition--------" + mUnCheckPosition);
+        if (!isCheck && mOldUnCheckPosition == mProductBeanList.size() - 1) {
+            Toast.makeText(DetailListActivity.this, "已到底部", Toast.LENGTH_SHORT).show();
+            return;
+        }
         label:
-        for (int i = mUnCheckPosition + 1; i < mProductBeanList.size(); i++) {
+        for (int i = mUnCheckPosition; i < mProductBeanList.size(); i++) {
             String real = mProductBeanList.get(i).getQuantity_real();
             if ("".equals(real)) {
                 /**读数是空的*/
@@ -306,30 +286,80 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 break label;
             }
         }
-        System.out.println("position---" + mUnCheckPosition);
+
+        mOldUnCheckPosition = mCurrentPosition;
+        Loger.d("mCurrentPosition----" + mCurrentPosition);
+        Loger.d("mOldUnCheckPosition----" + mOldUnCheckPosition);
         if (hasNoWeight) {
-            lv_content.smoothScrollToPosition(mUnCheckPosition);
-            showInput(mUnCheckPosition);
+            lv_content.smoothScrollToPositionFromTop(mUnCheckPosition - 1, 0);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    showInput(mUnCheckPosition);
+                }
+            }, 500);
         } else {
             mUnCheckPosition = 0;
             isInputShow = false;
             Toast.makeText(DetailListActivity.this, "没有遗漏的条目", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    private void showInput(int position) {
+        if (position >= mProductBeanList.size()) {
+            isInputShow = false;
+            return;
+        }
+        if (position > 2) {
+            lv_content.smoothScrollToPositionFromTop(mUnCheckPosition - 1, 0);
+        }
+        isInputShow = true;
+        ProductBean detailBean = mProductBeanList.get(position);
+        tv_num_input.setText(detailBean.getLine_num());
+        tv_name_input.setText(detailBean.getGoods_name());
+        tv_weight_input.setText(detailBean.getQuantity() + detailBean.getQuantity_unit());
+        if (detailBean.getQuantity_real() != null && !"".equals(detailBean.getQuantity_real())) {
+            /**数量不为空的情况下*/
+            et_input.setText(detailBean.getQuantity_real());
+        } else {
+            et_input.setText("0.0");
+        }
+//        Loger.d("detailBean---" + detailBean.toString());
+        if (detailBean.getRemark() != null && !"".equals(detailBean.getRemark())) {
+            tv_remark.setVisibility(View.VISIBLE);
+            view_divider.setVisibility(View.VISIBLE);
+            tv_remark.setText(detailBean.getRemark());
+        } else {
+            tv_remark.setVisibility(View.GONE);
+            view_divider.setVisibility(View.GONE);
+        }
+
+        et_input.setSelection(et_input.getText().toString().length());
+        et_input.setFocusable(true);
+        et_input.setFocusableInTouchMode(true);
+        et_input.requestFocus();
+        rl_full_input.setVisibility(View.VISIBLE);
+        ll_full_input.setVisibility(View.VISIBLE);
+        mUnCheckPosition++;
+    }
+
+    private void hideInput() {
+        rl_full_input.setVisibility(View.GONE);
+        ll_full_input.setVisibility(View.GONE);
+        ll_full_info.setVisibility(View.GONE);
+        isInputShow = false;
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_full_input://点击不显示
-                rl_full_input.setVisibility(View.GONE);
-                ll_full_input.setVisibility(View.GONE);
-                ll_full_info.setVisibility(View.GONE);
-                isInputShow = false;
+                hideInput();
                 break;
             case R.id.ll_full_input://称重的界面
                 rl_full_input.setVisibility(View.VISIBLE);
                 ll_full_input.setVisibility(View.VISIBLE);
-//                et_input.requestFocus();
                 isInputShow = true;
                 break;
             case R.id.btn_no://不称重
@@ -345,12 +375,13 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ProductBean productBean = mProductBeanList.get(mCurrentPosition);
                 String read = productBean.getQuantity();
                 productBean.setQuantity_real(read);
+                productBean.setQuantity_real_unit(productBean.getQuantity_unit());
                 mDetailAdapter.setData(mProductBeanList);
                 mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
                 notifyListCount();
 //                if (isCheckNoWeightOption) {
 //                    /**如果是查漏操作，跳到下一个查漏*/
-                checkNoWeight();
+                checkNoWeight(false);
 //                } else {
 //                    /**如果不是是查漏操作，跳到下一个*/
 //                    mCurrentPosition++;
@@ -373,6 +404,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                     } else {
                         ProductBean product = mProductBeanList.get(mCurrentPosition);
                         product.setQuantity_real(result);
+                        product.setQuantity_real_unit("斤");
                         mDetailAdapter.setData(mProductBeanList);
                         mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
                     }
@@ -385,7 +417,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 notifyListCount();
 //                if (isCheckNoWeightOption) {
 //                    /**如果是查漏操作，跳到下一个查漏*/
-                checkNoWeight();
+                checkNoWeight(false);
 //                } else {
 //                    /**如果不是是查漏操作，跳到下一个*/
 //                    mCurrentPosition++;
@@ -395,7 +427,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.btn_check://查漏
                 mUnCheckPosition = 0;
-                checkNoWeight();
+                checkNoWeight(true);
                 break;
             case R.id.iv_user://用户
                 rl_full_input.setVisibility(View.VISIBLE);
@@ -454,6 +486,9 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         WeightPresenter.getInstance().unRegisterCasrWeightWatcher(this);
     }
 
+    StringBuilder sb = new StringBuilder();
+    private float mPreHeight = 0;
+
     //----------------------------------------------------刷新显示线程
     private class DispQueueThread extends Thread {
 
@@ -464,16 +499,31 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 while (tempWeight != null && !"".equals(tempWeight)) {
                     runOnUiThread(new Runnable() {
                         public void run() {
-//                            tv_weight.setText(tempWeight);
                             String s = Utils.exeData(tempWeight) + "";
+//                            Loger.d("weight--------------s----------" + s);
+                            sb.append("  " + tempWeight + "----" + s + "+++");
+                            if (sb.length() > 1000) {
+                                sb = new StringBuilder();
+                            }
                             float f = Float.parseFloat(s);
-                            if (f < 0.01) {
-                                /**认为是0,Do Nothing*/
-                            } else {
+                            if (mPreHeight > f) {
+                                /**如果是变小的，说明放上货品了，可以变成0*/
+                                mPreHeight = f;
+                                tv_test.setText(sb.toString());
                                 et_input.setText(s);
                                 et_input.setSelection(s.length());
+                            } else {
+                                mPreHeight = f;
+                                tv_test.setText(sb.toString());
+                                if (f < 0.01) {
+                                    /**认为是0,Do Nothing*/
+                                } else {
+                                    et_input.setText(s);
+                                    et_input.setSelection(s.length());
+                                }
                             }
-//                            Toast.makeText(DetailListActivity.this, "DetailListActivity---DispQueueThread---" + Utils.exeData(tempWeight), Toast.LENGTH_LONG).show();
+
+
                         }
                     });
                     try {
@@ -489,6 +539,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onWeightNumChanged(String weight) {
+//        Loger.d("weight--------------" + weight);
         tempWeight = weight;
     }
 }

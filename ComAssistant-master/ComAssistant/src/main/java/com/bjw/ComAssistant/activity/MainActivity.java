@@ -52,6 +52,8 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         OpenComPort(ComC);
     }
 
+    StringBuilder toZero = new StringBuilder();
+
     protected void initView() {
         tv_weight = (TextView) findViewById(R.id.tv_weight);
         tv_test = (TextView) findViewById(R.id.tv_test);
@@ -61,7 +63,8 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
         bt_clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendPortData(ComC, mToZeros);
+                sendPortData(ComC, Contants.zeroBytes);
+                sbTemp.append(Contants.zeroBytes);
                 Toast.makeText(MainActivity.this, "发送成功---", Toast.LENGTH_LONG).show();
             }
         });
@@ -85,8 +88,17 @@ public class MainActivity extends BaseActivity implements WeightPresenter.CastWe
     protected void initData() {
         for (int i = 0; i < Contants.toZero.length; i++) {
             mToZeros[i] = MyFunc.HexToByte(Contants.toZero[i] + "");
-            System.out.println(mToZeros[i]);
+            toZero.append(MyFunc.Byte2Hex(mToZeros[i])).append(" ");
         }
+        Loger.d("--------------" + toZero.toString());
+        Loger.d("--------------" + MyFunc.ByteArrToHex(mToZeros));
+
+        Loger.d(MyFunc.toHexString(Contants.zeroBytes));
+        byte[] ss = MyFunc.toByteArray(MyFunc.toHexString(Contants.zeroBytes));
+        for (int j = 0; j < ss.length; j++) {
+            Loger.d("ss---" + ss[j]);
+        }
+        Loger.d(MyFunc.toHexString(Contants.zeroBytes));
 
         mDispQueue = new DispQueueThread();
         mDispQueue.start();
