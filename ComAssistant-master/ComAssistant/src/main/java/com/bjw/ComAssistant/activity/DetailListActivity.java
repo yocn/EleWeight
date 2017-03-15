@@ -289,6 +289,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
         mOldUnCheckPosition = mCurrentPosition;
         Loger.d("mCurrentPosition----" + mCurrentPosition);
+
         Loger.d("mOldUnCheckPosition----" + mOldUnCheckPosition);
         if (hasNoWeight) {
             lv_content.smoothScrollToPositionFromTop(mUnCheckPosition - 1, 0);
@@ -301,9 +302,27 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         } else {
             mUnCheckPosition = 0;
             isInputShow = false;
-            Toast.makeText(DetailListActivity.this, "没有遗漏的条目", Toast.LENGTH_SHORT).show();
+            if (!hasEmptyItem()) {
+                Toast.makeText(DetailListActivity.this, "没有遗漏的条目", Toast.LENGTH_SHORT).show();
+            }
         }
+    }
 
+    /**
+     * 还有没有空白的条目,只要有一个是空的，就不弹出 没有遗漏的条目
+     *
+     * @return
+     */
+    private boolean hasEmptyItem() {
+        boolean empty = false;
+        for (int i = 0; i < mProductBeanList.size(); i++) {
+            String read = mProductBeanList.get(i).getQuantity_real();
+            if (read == null || "".equals(read)) {
+                empty = true;
+            }
+        }
+        Loger.d("empty---" + empty);
+        return empty;
     }
 
     private void showInput(int position) {
