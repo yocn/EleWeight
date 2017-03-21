@@ -98,7 +98,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             UserBean use = (UserBean) o;
             EApplication.user = use;
 //            Toast.makeText(LoginActivity.this, "isRemeberPass---" + isRemeberPass, Toast.LENGTH_SHORT).show();
-            Loger.d("\"isRemeberPass---\" + isRemeberPass---"+"isRemeberPass---" + isRemeberPass);
+            Loger.d("\"isRemeberPass---\" + isRemeberPass---" + "isRemeberPass---" + isRemeberPass);
             if (isRemeberPass) {
                 /**如果勾选了记住密码，登录成功之后记住密码*/
                 EApplication.isLoginSuccess = true;
@@ -133,7 +133,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             iv_check.setImageResource(R.drawable.check);
             isRemeberPass = true;
         }
-        Loger.d("notifyCheck---"+"isRemeberPass---" + isRemeberPass);
+        Loger.d("notifyCheck---" + "isRemeberPass---" + isRemeberPass);
     }
 
     @Override

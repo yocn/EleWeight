@@ -1,9 +1,11 @@
 package com.bjw.ComAssistant.activity;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,12 +14,16 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bjw.ComAssistant.R;
+import com.bjw.ComAssistant.activity.print.BluetoothService;
+import com.bjw.ComAssistant.activity.print.DeviceListActivity;
+import com.bjw.ComAssistant.activity.print.PrintTicket;
 import com.bjw.ComAssistant.application.EApplication;
 import com.bjw.ComAssistant.bean.product.ProductBean;
 import com.bjw.ComAssistant.bean.product.ProductListBean;
@@ -33,8 +39,10 @@ import com.bjw.ComAssistant.view.DetailAdapter;
 import com.bjw.ComAssistant.view.DoubleDatePickerDialog;
 import com.bjw.ComAssistant.view.listview.XListView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,9 +70,11 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     TextView tv_num_input;//输入界面的id
     TextView tv_name_input;//输入界面的名字
     TextView tv_weight_input;//输入界面的称重
+    TextView tv_connect;//输入界面的称重
     EditText et_input;//输入界面的输入框
     Button btn_logout;//个人信息页的登出按钮
     ImageView iv_close;//个人信息页的关闭按钮
+    ImageView iv_print;//个人信息页的打印开关
     private int mCurrentPosition = 0;
     private String mCurrentUnit = "";
     private String mCurrentOrderId = "";
@@ -79,6 +89,13 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
     String tempWeight = "0.0";
     DispQueueThread mDispThread;
     private boolean isCheckNoWeightOption = false;//是否是点击查漏的操作，如果是点击的查漏，称重后跳到下一个没有重量的item，否则跳到下一个
+    private boolean isPrintOpen = false;//打印开关是否开启
+    TextView tv_test;
+    private BluetoothAdapter mBluetoothAdapter = null;
+    private BluetoothService mService = null;
+    private String mConnectedDeviceName = null;
+    private PrintTicket printer;
+    ProgressBar pb_connect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +105,10 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         initData();
     }
 
-    TextView tv_test;
-
     protected void initView() {
         tv_test = (TextView) findViewById(R.id.tv_test);
         iv_close = (ImageView) findViewById(R.id.iv_close);
+        iv_print = (ImageView) findViewById(R.id.iv_print);
         btn_logout = (Button) findViewById(R.id.btn_logout);
         tv_address = (TextView) findViewById(R.id.tv_address);
         view_divider = findViewById(R.id.view_divider);
@@ -117,11 +133,21 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         tv_name_input = (TextView) findViewById(R.id.tv_name_input);
         tv_weight_input = (TextView) findViewById(R.id.tv_weight_input);
         et_input = (EditText) findViewById(R.id.et_input);
+
+        pb_connect = (ProgressBar) findViewById(R.id.pb_connect);
+        tv_connect = (TextView) findViewById(R.id.tv_connect);
     }
 
 
     protected void initData() {
         mContext = this;
+//        isPrintOpen = SharedPreferencesUtil.getInstance(mContext).getBoolean("print", false);
+        if (isPrintOpen) {
+            iv_print.setImageResource(R.drawable.on);
+        } else {
+            iv_print.setImageResource(R.drawable.off);
+        }
+
         mDispThread = new DispQueueThread();
         mDispThread.start();
         WeightPresenter.getInstance().registerCastWeightWatcher(this);
@@ -142,16 +168,25 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 mUnCheckPosition = mCurrentPosition;
                 mOldUnCheckPosition = 0;
                 mCurrentUnit = mProductBeanList.get(mCurrentPosition).getQuantity_unit();
-//                setListViewPos(mCurrentPosition);
                 showInput(mCurrentPosition);
+                tv_address.setText(mProductBeanList.get(mCurrentPosition).getCustomer_store_name());
             }
         });
+
         setListener();
         loadData();
+        initPrint();
+    }
+
+    private void initPrint() {
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mService = new BluetoothService(this, mHandler);
+        printer = new PrintTicket(mService);
     }
 
     private void loadData() {
         if (EApplication.user == null) return;
+        tv_login_info.setText(EApplication.user.getName() + " (" + EApplication.user.getUid() + ")");
         mGetListPresenter.getList(EApplication.user.getUid(), EApplication.user.getAccess_token());
     }
 
@@ -257,6 +292,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         tv_date_picker_end.setOnClickListener(this);
         iv_close.setOnClickListener(this);
         btn_logout.setOnClickListener(this);
+        iv_print.setOnClickListener(this);
     }
 
     boolean hasNoWeight = false;
@@ -289,7 +325,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 
         mOldUnCheckPosition = mCurrentPosition;
         Loger.d("mCurrentPosition----" + mCurrentPosition);
-
         Loger.d("mOldUnCheckPosition----" + mOldUnCheckPosition);
         if (hasNoWeight) {
             lv_content.smoothScrollToPositionFromTop(mUnCheckPosition - 1, 0);
@@ -395,6 +430,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 String read = productBean.getQuantity();
                 productBean.setQuantity_real(read);
                 productBean.setQuantity_real_unit(productBean.getQuantity_unit());
+                printProduct(productBean);
                 mDetailAdapter.setData(mProductBeanList);
                 mQuantityPresenter.quantity(mCurrentOrderId, productBean.getGoods_id(), productBean.getCustomer_id(), productBean.getUnit_id(), productBean.getQuantity(), EApplication.user.getAccess_token());
                 notifyListCount();
@@ -426,6 +462,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                         product.setQuantity_real_unit("斤");
                         mDetailAdapter.setData(mProductBeanList);
                         mQuantityPresenter.quantity(mCurrentOrderId, product.getGoods_id(), product.getCustomer_id(), product.getUnit_id(), result, EApplication.user.getAccess_token());
+                        printProduct(product);
                     }
                 } else {
                     Toast.makeText(this, "请输入数字", Toast.LENGTH_SHORT).show();
@@ -443,6 +480,7 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
 //                    showInput(mCurrentPosition);
 //                }
 
+
                 break;
             case R.id.btn_check://查漏
                 mUnCheckPosition = 0;
@@ -453,6 +491,21 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 ll_full_info.setVisibility(View.VISIBLE);
                 break;
             case R.id.iv_home://home
+                break;
+            case R.id.iv_print:
+                if (isPrintOpen) {
+                    /**开启状态，需要关掉*/
+                    isPrintOpen = false;
+                    iv_print.setImageResource(R.drawable.off);
+//                    SharedPreferencesUtil.getInstance(mContext).saveBoolean("print", isPrintOpen);
+                    mService.stop();
+                } else {
+                    /**关闭状态，需要开启蓝牙*/
+                    isPrintOpen = true;
+                    iv_print.setImageResource(R.drawable.on);
+//                    SharedPreferencesUtil.getInstance(mContext).saveBoolean("print", isPrintOpen);
+                    connect();
+                }
                 break;
             case R.id.iv_close://我的信息，关闭
                 rl_full_input.setVisibility(View.GONE);
@@ -487,6 +540,30 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                 tv_date_picker_end.setText(end);
             }
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DATE), true).show();
+    }
+
+    /**
+     * 打印
+     *
+     * @param product 产品
+     */
+    private void printProduct(ProductBean product) {
+        if (printer != null) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String time = format.format(new Date());
+            printer.printGoodsInfo(product.getCustomer_store_name(), "商品：" + product.getGoods_name(), "数量：" + product.getQuantity_real() + product.getQuantity_real_unit(), time);
+        }
+    }
+
+
+    private void connect() {
+        if (mBluetoothAdapter != null && !mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, 2);
+        } else {
+            Intent serverIntent = new Intent(DetailListActivity.this, DeviceListActivity.class);
+            startActivityForResult(serverIntent, 1);
+        }
     }
 
     @Override
@@ -541,8 +618,6 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
                                     et_input.setSelection(s.length());
                                 }
                             }
-
-
                         }
                     });
                     try {
@@ -556,9 +631,80 @@ public class DetailListActivity extends BaseActivity implements View.OnClickList
         }
     }
 
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case BluetoothService.MESSAGE_STATE_CHANGE:
+                    switch (msg.arg1) {
+                        case BluetoothService.STATE_CONNECTED:
+                            pb_connect.setVisibility(View.GONE);
+                            tv_connect.setText("连接成功");
+                            tv_connect.setVisibility(View.VISIBLE);
+                            isPrintOpen = true;
+                            iv_print.setImageResource(R.drawable.on);
+//                            mtitle.setText("已经连接：");
+//                            mtitle.append(mConnectedDeviceName);
+//                            connectbutton.setEnabled(false);
+//                            disconnectbutton.setEnabled(true);
+                            break;
+                        case BluetoothService.STATE_CONNECTING:
+//                            mtitle.setText("正在连接");
+                            pb_connect.setVisibility(View.VISIBLE);
+                            break;
+                        case BluetoothService.STATE_LISTEN:
+                        case BluetoothService.STATE_NONE:
+                            pb_connect.setVisibility(View.GONE);
+                            tv_connect.setText("连接未成功");
+                            tv_connect.setVisibility(View.VISIBLE);
+                            isPrintOpen = false;
+                            iv_print.setImageResource(R.drawable.off);
+//                            connectbutton.setEnabled(true);
+//                            disconnectbutton.setEnabled(false);
+//                            mtitle.setText("没有连接");
+                            break;
+                    }
+                    break;
+                case BluetoothService.MESSAGE_WRITE:
+                    // byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    // String writeMessage = new String(writeBuf);
+                    break;
+                case BluetoothService.MESSAGE_READ:
+                    // byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    // String readMessage = new String(readBuf, 0, msg.arg1);
+                    break;
+                case BluetoothService.MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    mConnectedDeviceName = msg.getData().getString(BluetoothService.DEVICE_NAME);
+                    Toast.makeText(getApplicationContext(), "成功连接到打印机" + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    break;
+                case BluetoothService.MESSAGE_TOAST:
+                    Toast.makeText(getApplicationContext(), msg.getData().getString(BluetoothService.TOAST), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
+
     @Override
     public void onWeightNumChanged(String weight) {
 //        Loger.d("weight--------------" + weight);
         tempWeight = weight;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                if (BluetoothAdapter.checkBluetoothAddress(address)) {
+                    BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
+                    mService.connect(device);
+                }
+            }
+        }
+        Toast.makeText(this, "正在连接中，请稍候...", Toast.LENGTH_LONG).show();
     }
 }
